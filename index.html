@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Login</title>
+  <link rel = "stylesheet" href = "style.css">
+</head>
+<body>
+
+  <div class="main">
+    <h1>Attendance Tracker</h1>
+    <h3>Enter your login credentials</h3>
+
+    <form action="FormSubmited()">
+        <label for="first">
+            Username:
+        </label>
+        <input type="text" id="email" name="first" 
+            placeholder="Enter your Username or Email Id" required>
+
+        <label for="password">
+            Password:
+        </label>
+        <input type="password" id="password" name="password" 
+            placeholder="Enter your Password" required>
+
+        <div class="wrap">
+            <button type="submit" id="submit">
+                Login
+            </button>
+        </div>
+    </form>
+    
+    <p>Not registered?
+        <a href="#" style="text-decoration: none;">
+            Create an account
+        </a>
+    </p>
+</div>
+  <!-- <div class="container">
+    <div class="main_h1"><h1><center><em>Attendance Tracker</em></center></h1></div>
+    <div id="main">
+      <h1><center>Sign In</center></h1>
+      <div class="login">
+        <div class="tab"><label for="email">Email</label><input id = "email" type = "text" placeholder = "Email"></input></div>
+        <div class="tab"><label for="password">Password</label><input id = "password" type = "password" placeholder = "Password"></input></div>
+        <center><button id = "submit">Login</button></center>
+    </div>
+<p><span>or</span></p>
+      <button id = "sign-up">Sign Up</button>
+    </div>
+  </div> -->
+    
+  <!-- <div class = "login-container">
+    
+
+    <div id = "create-acct">
+      <h1>Create an Account</h1>
+      <input id = "email-signup" type = "text" placeholder = "Email *"></input>
+  <input id = "confirm-email-signup" type = "email" placeholder = "Confirm Email *"></input>
+      <input id = "password-signup" type = "password" placeholder = "Password *"></input>
+      <input id = "confirm-password-signup" type = "password" placeholder = "Confirm Password *"></input>
+      <button id = "create-acct-btn">Create Account</button>
+      <button id = "return-btn">Return to Login</button>
+    </div>
+  </div> -->
+  <script type = "module" src = "script.js"></script>
+</body>
+</html>

@@ -1,0 +1,139 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: #f4f4f4;
+}
+
+.h2_class{
+    padding: 0;
+    font-size: 2em;
+    margin: 10px;
+    color: #4CAF50;
+}
+
+.container {
+    max-width: 98vw;
+    margin: auto;
+    background: white;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.left_block {
+    width: 45vw;
+    padding-left: 20px;
+}
+
+.left_block input{
+    width:70%;
+}
+
+
+
+.tab-content{
+    padding: 10px;
+    background-color: rgb(241, 241, 241);
+    border-radius: 10px;
+}
+
+.tab-content h2{
+    padding: 0;
+    margin-top: 10px;
+}
+
+.right_block {
+    width: 45vw;
+    padding-left: 20px;
+}
+
+.tabs {
+    display: flex;
+    justify-content: space-between;
+}
+
+.tab-button {
+    padding: 10px 20px;
+    cursor: pointer;
+    background-color: #c0c0c0;
+    color: white;
+    border: none;
+    border-radius: 5px;
+}
+
+.tab-button:hover {
+    background-color: #e4e4e4;
+}
+
+.tabs .active{
+    background-color: #4CAF50;
+}
+
+.tab-content {
+    margin-top: 20px;
+}
+
+label {
+    display: block;
+    margin: 10px 0 5px;
+}
+
+input,
+select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+button {
+    padding: 10px;
+    background-color: #61ac64;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #32ad36;
+}
+
+#courseCheckboxes {
+    margin-bottom: 20px;
+}
+
+#courseCheckboxes input{
+    width: 120px;
+}
+
+.box_01{
+    display: flex;
+}
+
+#timetable {
+    margin: 10px;
+    width: 40%;
+    height: 50vh;
+}
+
+#studentList{
+    margin: 10px;
+    width: 55vw;
+    height: 50vh;
+}
+
+.timetable-slot {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    border: 1px solid #ccc;
+    margin: 5px 0;
+    border-radius: 5px;
+}
+
+.timetable-slot.active {
+    background-color: #acacac;
+}
