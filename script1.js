@@ -24,9 +24,6 @@ const db = getDatabase(app);
 document.addEventListener("DOMContentLoaded", () => {
     const token = localStorage.getItem("auth-token");
     if (!token) {
-        // If no token is found, redirect to the login page
-        // prompt("You must be logged in to access the dashboard.");
-        // alert("You must be logged in to access the dashboard.");
         window.location.href = "index.html";
     }
 });
@@ -49,22 +46,36 @@ const timetable = {
         { time: "1:00-2:00", course: "Art" },
         { time: "2:00-3:00", course: "History" }
     ],
-    Saturday: [
+    Wednesday: [
         { time: "10:00-11:00", course: "History" },
-        { time: "22:00-23:00", course: "Literature" },
-        { time: "12:00-13:00", course: "Art" },
-        { time: "20:00-21:00", course: "Science" },
+        { time: "11:00-12:00", course: "Literature" },
+        { time: "12:00-1:00", course: "Art" },
+        { time: "1:00-2:00", course: "Science" },
         { time: "2:00-3:00", course: "Mathematics" }
     ],
-    Sunday: [
-        { time: "10:00-11:00", course: "Art" },
-        { time: "11:00-12:00", course: "History" },
-        { time: "13:00-15:00", course: "Literature" },
-        { time: "20:00-21:00", course: "Science" },
-        { time: "22:00-23:00", course: "Mathematics" }
-    ]
+    Thursday: [
+        { time: "10:00-11:00", course: "Mathematics" },
+        { time: "11:00-12:00", course: "Science" },
+        { time: "12:00-1:00", course: "History" },
+        { time: "1:00-2:00", course: "Literature" },
+        { time: "2:00-3:00", course: "Art" }
+    ],
+    Friday: [
+        { time: "10:00-11:00", course: "Science" },
+        { time: "11:00-12:00", course: "Mathematics" },
+        { time: "12:00-1:00", course: "Literature" },
+        { time: "1:00-2:00", course: "Art" },
+        { time: "2:00-3:00", course: "History" }
+    ],
 
-    // Add other days similarly...
+    Sunday: [
+        { time: "10:00-11:00", course: "History" },
+        { time: "22:00-23:00", course: "Literature" },
+        { time: "12:00-15:00", course: "Art" },
+        { time: "15:00-17:00", course: "Science" },
+        { time: "22:00-23:00", course: "Mathematics" }
+    ],
+    Saturday: []
 };
 
 // Attach functions to the window object
@@ -77,27 +88,126 @@ window.showTab = function (tabName) {
 };
 
 // Display timetable
-function displayTimetable() {
-    const timetableDiv = document.getElementById('timetable');
-    const today = new Date();
-    const dayName = today.toLocaleString('default', { weekday: 'long' });
-    const currentHour = today.getHours();
-    const currentMinute = today.getMinutes();
-    const currentTime = `${currentHour}:${currentMinute < 10 ? '0' + currentMinute : currentMinute}`;
+// function displayTimetable() {
+//     const timetableDiv = document.getElementById('timetable');
+//     const today = new Date();
+//     const dayName = today.toLocaleString('default', { weekday: 'long' });
+//     const currentHour = today.getHours();
+//     const currentMinute = today.getMinutes();
+//     const currentTime = `${currentHour}:${currentMinute < 10 ? '0' + currentMinute : currentMinute}`;
 
-    timetableDiv.innerHTML = '';
-    timetable[dayName].forEach(slot => {
-        const slotDiv = document.createElement('div');
-        slotDiv.className = 'timetable-slot';
-        slotDiv.innerHTML = `<span>${slot.time}</span><span>${slot.course}</span>`;
-        if (isCurrentSlot(slot.time, currentTime)) {
-            slotDiv.classList.add('active');
-            loadStudents(slot.course);
-            document.getElementById('markAttendanceButton').style.display = 'block'; // Show the attendance button
-        }
-        timetableDiv.appendChild(slotDiv);
-    });
+//     timetableDiv.innerHTML = '';
+//     timetable[dayName].forEach(slot => {
+//         const slotDiv = document.createElement('div');
+//         slotDiv.className = 'timetable-slot';
+//         slotDiv.innerHTML = `<span>${slot.time}</span><span>${slot.course}</span>`;
+//         if (isCurrentSlot(slot.time, currentTime)) {
+//             slotDiv.classList.add('active');
+//             loadStudents(slot.course);
+//             document.getElementById('markAttendanceButton').style.display = 'block'; // Show the attendance button
+//         }
+//         timetableDiv.appendChild(slotDiv);
+//     });
+// }
+
+
+
+function isCurrentSlot(slotTime, currentTime) {
+    const [start, end] = slotTime.split("-");
+    const startTime = convertToMinutes(start);
+    const endTime = convertToMinutes(end);
+    const currentMinutes = convertToMinutes(currentTime);
+
+    return currentMinutes >= startTime && currentMinutes < endTime;
 }
+
+function convertToMinutes(time) {
+    const [hours, minutes] = time.split(":").map(Number);
+    return hours * 60 + minutes;
+}
+
+// function displayTimetable() {
+//     const days = Object.keys(timetable);
+//     const allTimeSlots = [...new Set(days.flatMap(day => timetable[day].map(slot => slot.time)))];
+//     const timetableDiv = document.getElementById("timetable");
+//     const today = new Date();
+//     const currentDay = today.toLocaleString("default", { weekday: "long" });
+//     const currentHour = today.getHours();
+//     const currentMinute = today.getMinutes();
+//     const currentTime = `${currentHour}:${currentMinute < 10 ? "0" + currentMinute : currentMinute}`;
+
+//     // Create table
+//     const table = document.createElement("table");
+//     table.classList.add("timetable-table");
+
+//     // Create header row
+//     const headerRow = document.createElement("tr");
+//     headerRow.innerHTML = `<th>Day</th>${allTimeSlots.map(slot => `<th>${slot}</th>`).join("")}`;
+//     table.appendChild(headerRow);
+
+//     // Create rows for each day
+//     days.forEach(day => {
+//         const row = document.createElement("tr");
+//         row.innerHTML = `<td>${day}</td>${allTimeSlots
+//             .map(slot => {
+//                 const classData = timetable[day].find(classSlot => classSlot.time === slot);
+//                 const isActive = day === currentDay && isCurrentSlot(slot, currentTime);
+//                 return `<td class="${isActive ? "active-slot" : ""}">${classData ? classData.course : "--"}</td>`;
+//             })
+//             .join("")}`;
+//         table.appendChild(row);
+//     });
+
+//     // Append table to timetableDiv
+//     timetableDiv.innerHTML = "";
+//     timetableDiv.appendChild(table);
+// }
+
+
+
+// function displayTimetable() {
+//     const days = Object.keys(timetable);
+//     const allTimeSlots = [...new Set(days.flatMap(day => timetable[day].map(slot => slot.time)))];
+//     const timetableDiv = document.getElementById("timetable");
+//     const today = new Date();
+//     const currentDay = today.toLocaleString("default", { weekday: "long" });
+//     const currentHour = today.getHours();
+//     const currentMinute = today.getMinutes();
+//     const currentTime = `${currentHour}:${currentMinute < 10 ? "0" + currentMinute : currentMinute}`;
+
+//     // Create table
+//     const table = document.createElement("table");
+//     table.classList.add("timetable-table");
+
+//     // Create header row
+//     const headerRow = document.createElement("tr");
+//     headerRow.innerHTML = `<th>Day</th>${allTimeSlots.map(slot => `<th>${slot}</th>`).join("")}`;
+//     table.appendChild(headerRow);
+
+//     // Create rows for each day
+//     days.forEach(day => {
+//         const row = document.createElement("tr");
+//         row.innerHTML = `<td>${day}</td>${allTimeSlots
+//             .map(slot => {
+//                 const classData = timetable[day].find(classSlot => classSlot.time === slot);
+//                 const isActive = day === currentDay && isCurrentSlot(slot, currentTime);
+                
+//                 // Add actions for the selected cell
+//                 if (isActive && classData) {
+//                     loadStudents(classData.course);
+//                     document.getElementById("markAttendanceButton").style.display = "block"; // Show the attendance button
+//                 }
+                
+//                 return `<td class="${isActive ? "active-slot" : ""}">${classData ? classData.course : "--"}</td>`;
+//             })
+//             .join("")}`;
+//         table.appendChild(row);
+//     });
+
+//     // Append table to timetableDiv
+//     timetableDiv.innerHTML = "";
+//     timetableDiv.appendChild(table);
+// }
 
 // Add new student
 document.getElementById('addStudentForm').addEventListener('submit', function (event) {
@@ -145,10 +255,10 @@ document.getElementById('addStudentForm').addEventListener('submit', function (e
 });
 
 // Check if the current time is within the slot time
-function isCurrentSlot(slotTime, currentTime) {
-    const [start, end] = slotTime.split('-');
-    return currentTime >= start && currentTime < end;
-}
+// function isCurrentSlot(slotTime, currentTime) {
+//     const [start, end] = slotTime.split('-');
+//     return currentTime >= start && currentTime < end;
+// }
 
 // Load students based on selected course
 window.loadStudents = function (courseSelect) {
@@ -234,20 +344,20 @@ document.getElementById('markAttendanceTab').addEventListener('click', () => {
     document.getElementById('addStudentTab').classList.remove('active');
     document.getElementById('markAttendanceTab').classList.add('active');
     showTab('markAttendance');
-    displayTimetable(); // Display the timetable when switching to the attendance tab
+    // displayTimetable(); // Display the timetable when switching to the attendance tab
 });
 
 // Initialize the timetable display on page load
-window.onload = function () {
-    displayTimetable();
-};
+// window.onload = function () {
+//     displayTimetable();
+// };
 
-const profileIcon = document.getElementById("profileIcon");
-const profileDropdown = document.getElementById("profileDropdown");
+// const profileIcon = document.getElementById("profileIcon");
+// const profileDropdown = document.getElementById("profileDropdown");
 
-profileIcon.addEventListener("click", () => {
-    profileDropdown.classList.toggle("active");
-});
+// profileIcon.addEventListener("click", () => {
+//     profileDropdown.classList.toggle("active");
+// });
 
 // Logout functionality
 const logoutButton = document.getElementById("logoutButton");
@@ -256,3 +366,73 @@ logoutButton.addEventListener("click", () => {
     localStorage.removeItem("auth-token");
     window.location.href = "index.html";
 });
+
+
+
+
+
+
+
+
+
+
+
+function createTimetableTable(data, highlightCurrent = false) {
+    const days = Object.keys(data);
+    const allTimeSlots = [...new Set(days.flatMap(day => data[day].map(slot => slot.time)))];
+
+    const table = document.createElement("table");
+    table.classList.add("timetable-table");
+
+    // Header row
+    const headerRow = document.createElement("tr");
+    headerRow.innerHTML = `<th>Day</th>${allTimeSlots.map(slot => `<th>${slot}</th>`).join("")}`;
+    table.appendChild(headerRow);
+
+    // Rows for each day
+    days.forEach(day => {
+        const row = document.createElement("tr");
+        row.innerHTML = `<td>${day}</td>${allTimeSlots
+            .map(slot => {
+                const classData = data[day].find(classSlot => classSlot.time === slot);
+                const isActive = highlightCurrent && isCurrentSlot(slot, getCurrentTime());
+                if (isActive && classData) {
+                    loadStudents(classData.course);
+                    document.getElementById("markAttendanceButton").style.display = "block"; // Show the button
+                }
+                return `<td class="${isActive ? "active-slot" : ""}">${classData ? classData.course : "--"}</td>`;
+            })
+            .join("")}`;
+        table.appendChild(row);
+    });
+
+    return table;
+}
+
+// Utility to get current time
+function getCurrentTime() {
+    const now = new Date();
+    return `${now.getHours()}:${now.getMinutes().toString().padStart(2, "0")}`;
+}
+
+
+function generateFullTimetable() {
+    const timetableDiv = document.getElementById("fullTimetable");
+    const table = createTimetableTable(timetable);
+    timetableDiv.innerHTML = "";
+    timetableDiv.appendChild(table);
+}
+
+function generateCurrentDayTimetable() {
+    const timetableDiv = document.getElementById("currentDayTimetable");
+    const today = new Date();
+    const currentDay = today.toLocaleString("default", { weekday: "long" });
+    const table = createTimetableTable({ [currentDay]: timetable[currentDay] }, true);
+    timetableDiv.innerHTML = "";
+    timetableDiv.appendChild(table);
+}
+
+
+
+generateFullTimetable();
+generateCurrentDayTimetable();
