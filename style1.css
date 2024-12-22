@@ -50,7 +50,7 @@ body {
 
 .tabs {
     display: flex;
-    justify-content: space-between;
+    /* justify-content: space-between; */
 }
 
 .tab-button {
@@ -60,6 +60,7 @@ body {
     color: white;
     border: none;
     border-radius: 5px;
+    margin-right: 10px;
 }
 
 .tab-button:hover {
@@ -136,4 +137,72 @@ button:hover {
 
 .timetable-slot.active {
     background-color: #acacac;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.profile-container {
+    float: right;
+    position: relative;
+    /* top: 10px; */
+    /* right: 20px; */
+}
+
+.profile-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    background-color: #ddd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: bold;
+    color: #444;
+}
+
+.dropdown {
+    position: absolute;
+    top: 50px;
+    right: 0;
+    width: 200px;
+    background-color: #e1e4ff;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    display: none;
+    flex-direction: column;
+    padding: 10px;
+}
+
+.dropdown.active {
+    display: flex;
+}
+
+.dropdown-item {
+    padding: 8px 10px;
+    border-bottom: 1px solid #ffffff;
+    cursor: pointer;
+    text-align: left;
+}
+
+.dropdown-item:last-child {
+    border-bottom: none;
+}
+
+.dropdown-item:hover {
+    border-radius: 5px;
+    background-color: #ffffff;
 }

@@ -8,7 +8,7 @@
     <script type="module" src="script1.js" defer></script>
 </head>
 <body>
-    <div class="container">
+    <!-- <div class="container">
         <h2 class="h2_class"><center><em>Student Attendance Tracker</em></center></h2>
         <div class="tabs">
             <button class="tab-button active" id="addStudentTab">Add Student</button>
@@ -31,7 +31,7 @@
                 </div>
                 <div class="right_block">
                     <label>Courses:</label>
-                    <!-- <br> -->
+                    
                     <div id="courseCheckboxes">
                         <label><input type="checkbox" value="Mathematics"> Mathematics</label>
                             <label><input type="checkbox" value="Science" >  Science</label>
@@ -54,7 +54,67 @@
             <div id="studentList"></div>
         </div>
             <button id="markAttendanceButton" onclick="markAttendance()" style="display:none;">Mark Attendance</button>
-        </div>
+        </div> -->
+
+
+        <div class="container">
+            <div style="position: relative;">
+                <h2 class="h2_class">
+                    <center><em>Student Attendance Tracker</em></center>
+                </h2>
+                <!-- Profile Icon -->
+                <div class="profile-container">
+                    <div class="profile-icon" id="profileIcon">P</div>
+                    <div class="dropdown" id="profileDropdown">
+                        <div class="dropdown-item" id="usernameDisplay">Username: Rajat Jangid</div>
+                        <div class="dropdown-item" id="emailDisplay">Email: test@gmail.com</div>
+                        <div id="logoutButton"><center><button style="margin: 5px;">Logout</button></center></div>
+                    </div>
+                </div>
+            </div>
+    
+            <div class="tabs">
+                <button class="tab-button active" id="addStudentTab">Add Student</button>
+                <button class="tab-button" id="markAttendanceTab">Mark Attendance</button>
+            </div>
+    
+            <div id="addStudent" class="tab-content">
+                <h3><center>Add Student</center></h3>
+                <form id="addStudentForm">
+                    <div style="display: flex;">
+                        <div class="left_block">
+                            <label for="studentName">Student Name:</label>
+                            <input type="text" id="studentName" required>
+                            <label for="studentEmail">Email:</label>
+                            <input type="email" id="studentEmail" required>
+                            <label for="studentPhone">Phone Number:</label>
+                            <input type="text" id="studentPhone" required>
+                            <label for="studentBatch">Batch:</label>
+                            <input type="text" id="studentBatch" required>
+                        </div>
+                        <div class="right_block">
+                            <label>Courses:</label>
+                            <div id="courseCheckboxes">
+                                <label><input type="checkbox" value="Mathematics"> Mathematics</label>
+                                <label><input type="checkbox" value="Science"> Science</label>
+                                <label><input type="checkbox" value="History"> History</label>
+                                <label><input type="checkbox" value="Literature"> Literature</label>
+                                <label><input type="checkbox" value="Art"> Art</label>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="submit">Add Student</button>
+                </form>
+            </div>
+    
+            <div id="markAttendance" class="tab-content" style="display:none;">
+                <h2><center>Mark Attendance</center></h2>   
+                <div class="box_01">
+                    <div id="timetable"></div>
+                    <div id="studentList"></div>
+                </div>
+                <button id="markAttendanceButton" onclick="markAttendance()" style="display:none;">Mark Attendance</button>
+            </div>
     </div>
     <script type="module" src="https://www.gstatic.com/firebasejs/9.6.8/firebase-app.js"></script>
     <script type="module" src="https://www.gstatic.com/firebasejs/9.6.8/firebase-database.js"></script>
