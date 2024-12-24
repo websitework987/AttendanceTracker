@@ -261,3 +261,43 @@ button:hover {
 #markAttendanceButton:hover {
     background-color: #218838;
 }
+
+
+
+/* Table Styling */
+.attendance-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 16px;
+    text-align: left;
+}
+
+.attendance-table th, .attendance-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+.attendance-table th {
+    background-color: #f4f4f4;
+    font-weight: bold;
+    text-align: center;
+}
+
+/* Attendance Styling */
+.attendance-table .present {
+    color: blue;
+    font-weight: bold;
+    text-align: center;
+}
+
+.attendance-table .absent {
+    color: red;
+    font-weight: bold;
+    text-align: center;
+}
+
+/* Current Day Checkbox Column */
+.attendance-table td:last-child {
+    text-align: center;
+}

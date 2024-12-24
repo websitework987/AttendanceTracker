@@ -104,6 +104,50 @@ var email, password, signupEmail, signupPassword, confirmSignupEmail, confirmSig
 
 
 
+// document.getElementById("loginForm").addEventListener("submit", async (e) => {
+//   e.preventDefault();
+
+//   email = emailInput.value;
+//   console.log(email);
+//   password = passwordInput.value;
+//   console.log(password);
+
+
+
+//   signInWithEmailAndPassword(auth, email, password)
+//     .then((userCredential) => {
+//       // Signed in
+//       const user = userCredential.user;
+//       console.log("Success! Welcome back!");
+//       localStorage.setItem("auth-token", "secure-token");
+
+//       alert("Login successful!");
+//       window.location.href = "dashboard.html";
+//     })
+//     .catch((error) => {
+//       const errorCode = error.code;
+//       const errorMessage = error.message;
+//       console.log("Error occurred. Try again.");
+//       window.alert("Error occurred. Try again.");
+//     });
+// });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 document.getElementById("loginForm").addEventListener("submit", async (e) => {
   e.preventDefault();
 
@@ -112,20 +156,63 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
   password = passwordInput.value;
   console.log(password);
 
-
-
   signInWithEmailAndPassword(auth, email, password)
     .then((userCredential) => {
       // Signed in
       const user = userCredential.user;
       console.log("Success! Welcome back!");
-      //   window.alert("Success! Welcome back!");
-      // window.location.href = 'dashboard.html';
-
       localStorage.setItem("auth-token", "secure-token");
-      alert("Login successful!");
-      window.location.href = "dashboard.html";
-      // ...0
+
+      // Create a popup message
+      const popup = document.createElement("div");
+      popup.id = "login-popup";
+      popup.textContent = "Login successful! Redirecting to dashboard...";
+      document.body.appendChild(popup);
+
+      // Style the popup
+      const style = document.createElement("style");
+      style.textContent = `
+        #login-popup {
+          position: fixed;
+          top: -50px;
+          left: 50%;
+          transform: translateX(-50%);
+          background-color: #4CAF50;
+          color: white;
+          padding: 10px 20px;
+          border-radius: 5px;
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+          font-size: 16px;
+          opacity: 1;
+          transition: opacity 0.5s ease, top 0.3s ease;
+          z-index: 1000;
+        }
+
+        #login-popup.show {
+          top: 20px;
+        }
+
+        #login-popup.hide {
+          opacity: 0;
+          top: -50px;
+        }
+      `;
+      document.head.appendChild(style);
+
+      // Show the popup with an upward effect
+      setTimeout(() => {
+        popup.classList.add("show");
+      }, 10);
+
+      // Hide the popup after 1.7 seconds
+      setTimeout(() => {
+        popup.classList.add("hide");
+      }, 1400);
+
+      // Redirect to dashboard after 2.2 seconds
+      setTimeout(() => {
+        window.location.href = "dashboard.html";
+      }, 1800);
     })
     .catch((error) => {
       const errorCode = error.code;
@@ -134,6 +221,9 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
       window.alert("Error occurred. Try again.");
     });
 });
+
+
+
 
 
 // function FormSubmited() {
