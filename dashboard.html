@@ -11,7 +11,7 @@
 </head>
 
 <body>
-    <div class="container_01 ">
+    <div class="container_01">
         <div style="position: relative;">
             <h2 class="h2_class">
                 <center><em><u>Student Attendance Tracker</u></em></center>
@@ -27,17 +27,22 @@
                     </div>
                 </div> -->
                 <div id="logoutButton">
-                    <center><button style="margin: 5px; border-radius:5px; background-color:rgb(236, 26, 26);" title="For Logout">Logout</button></center>
+                    <center><button style="margin: 5px; border-radius:5px; background-color:rgb(236, 26, 26);"
+                            title="For Logout">Logout</button></center>
                 </div>
             </div>
         </div>
 
         <div class="tabs">
             <button class="tab-button active " id="addStudentTab" title="For Adding new Students">Add Student</button>
-            <button class="tab-button " id="markAttendanceTab" title="For Attendance and Time Table Editing">Mark Attendance</button>
+            <button class="tab-button " id="markAttendanceTab" title="For Attendance and Time Table Editing">Mark
+                Attendance</button>
+            <button class="tab-button " id="editStudentTab" title="For Editing Student details">Edit Student
+                Details</button>
+            <button class="tab-button " id="editCoursesTab" title="For adding new courses">Edit Courses</button>
         </div>
 
-        <div id="addStudent" class="tab-content" >
+        <div id="addStudent" class="tab-content">
             <h3>
                 <center>Add Student</center>
             </h3>
@@ -81,24 +86,12 @@
                     <button type="submit" style="border-radius: 5px;">Add Student</button>
                 </div>
             </form>
-            
-            
-            
-            
+
+
+
+
         </div>
-
-        <!-- <div id="markAttendance" class="tab-content" style="display:none;">
-            <h2>
-                <center>Mark Attendance</center>
-            </h2>
-            <div class="box_01">
-                <div id="timetable"></div>
-                <div id="studentList"></div>
-            </div>
-            <button id="markAttendanceButton" onclick="markAttendance()" style="display:none;">Mark Attendance</button>
-        </div> -->
-
-        <div id="markAttendance" class="tab-content" style="display:none;" >
+        <div id="markAttendance" class="tab-content" style="display:none;">
             <div class="accordion" id="timetableAccordion">
                 <!-- Full Timetable Accordion -->
                 <div class="accordion-item">
@@ -135,9 +128,66 @@
             </div>
         </div>
 
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-        <script type="module" src="https://www.gstatic.com/firebasejs/9.6.8/firebase-app.js"></script>
-        <script type="module" src="https://www.gstatic.com/firebasejs/9.6.8/firebase-database.js"></script>
+        <div id="editStudent" class="tab-content" style="display: none;">
+            <h3>
+                <center>Edit Student</center>
+            </h3>
+            <form id="editStudentForm">
+                <div style="display: flex;">
+                    <div class="left_block mt-4">
+                        <div>
+                            <label for="studentSelect" style="width: 110px;">Select Student</label>
+                            <select id="studentSelect" required>
+                                <option value="">Select a Student</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="studentName" style="width: 110px;">Student Name</label>
+                            <input type="text" id="studentName_01" placeholder="Student Name" required readonly>
+                        </div>
+                        <div>
+                            <label for="studentId_01" style="width: 110px;">Student Id</label>
+                            <input type="text" id="studentId_01" placeholder="Student Id" required>
+                        </div>
+                        <div>
+                            <label for="studentEmail_01" style="width: 110px;">Email</label>
+                            <input type="email" id="studentEmail_01" placeholder="Email" required>
+                        </div>
+                        <div>
+                            <label for="studentPhone_01" style="width: 110px;">Phone No.</label>
+                            <input type="text" id="studentPhone_01" placeholder="Phone No." required>
+                        </div>
+                        <div>
+                            <label for="studentBatch_01" style="width: 110px;">Batch</label>
+                            <input type="text" id="studentBatch_01" placeholder="Batch" required>
+                        </div>
+                    </div>
+                    <div class="right_block">
+                        <label>Courses:</label>
+                        <div id="courseDropdowns_01">
+                            <!-- Dynamically filled course rows -->
+                        </div>
+                        <button type="button" id="addCourseBtn_01" style="margin-top: 10px; border-radius:5px;">+</button>
+                    </div>
+                </div>
+                <div>
+                    <button type="submit" style="border-radius: 5px;">Update Student</button>
+                </div>
+            </form>
+
+        </div>
+
+        <div id="editCourses" class="tab-content" style="display: none;">
+            <h3>
+                <center>Edit Courses</center>
+            </h3>
+
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="module" src="https://www.gstatic.com/firebasejs/9.6.8/firebase-app.js"></script>
+    <script type="module" src="https://www.gstatic.com/firebasejs/9.6.8/firebase-database.js"></script>
 </body>
 
 </html>

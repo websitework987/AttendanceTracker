@@ -225,7 +225,7 @@ document.getElementById('addStudentForm').addEventListener('submit', function (e
             // Create a new student object with attendance initialized for each course
             const newStudent = {
                 name: studentName,
-                id:studentId,
+                id: studentId,
                 email: studentEmail,
                 phone: studentPhone,
                 batch: studentBatch,
@@ -648,17 +648,37 @@ window.showTab = function (tabName) {
 document.getElementById('addStudentTab').addEventListener('click', () => {
     document.getElementById('addStudentTab').classList.add('active');
     document.getElementById('markAttendanceTab').classList.remove('active');
+    document.getElementById('editStudentTab').classList.remove('active');
     fetchCoursesFromDatabaseAndUpdate();
     showTab('addStudent');
 });
 document.getElementById('markAttendanceTab').addEventListener('click', () => {
     document.getElementById('addStudentTab').classList.remove('active');
+    document.getElementById('editStudentTab').classList.remove('active');
     document.getElementById('markAttendanceTab').classList.add('active');
+    document.getElementById('editCoursesTab').classList.remove('active');
     showTab('markAttendance');
     loadDataFromDatabase();
     // displayTimetable(); // Display the timetable when switching to the attendance tab
 });
 
+document.getElementById('editStudentTab').addEventListener('click', () => {
+    // console.log("Edit Mode");
+    document.getElementById('addStudentTab').classList.remove('active');
+    document.getElementById('markAttendanceTab').classList.remove('active');
+    document.getElementById('editStudentTab').classList.add('active');
+    document.getElementById('editCoursesTab').classList.remove('active');
+    showTab('editStudent');
+});
+
+document.getElementById('editCoursesTab').addEventListener('click', () => {
+    // console.log("Edit Mode");
+    document.getElementById('addStudentTab').classList.remove('active');
+    document.getElementById('markAttendanceTab').classList.remove('active');
+    document.getElementById('editStudentTab').classList.remove('active');
+    document.getElementById('editCoursesTab').classList.add('active');
+    showTab('editCourses');
+});
 fetchCoursesFromDatabaseAndUpdate();
 
 
@@ -1132,3 +1152,283 @@ document.getElementById('headingTwo').addEventListener('click', () => {
     // console.log("SecondHeading");
     generateCurrentDayTimetable();
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//Edit Student Tab
+
+
+function fetchAllStudents() {
+    const studentRef = ref(db, 'students'); // Reference to the 'students' object in the database
+    const studentSelect = document.getElementById('studentSelect');
+
+    get(studentRef).then(snapshot => {
+        if (snapshot.exists()) {
+            const students = snapshot.val();
+            Object.keys(students).forEach(studentId => {
+                const student = students[studentId];
+                const option = document.createElement('option');
+                option.value = studentId; // Use Firebase's key as the value
+                option.textContent = student.name; // Assuming 'name' is a property of your student object
+                studentSelect.appendChild(option);
+            });
+        } else {
+            console.log("No students found in the database.");
+        }
+    }).catch(error => {
+        console.error("Error fetching students:", error);
+    });
+}
+
+
+function fetchStudentDetails(studentId) {
+    const studentRef = ref(db, `students/${studentId}`); // Reference to the specific student in the database
+
+    return get(studentRef).then(snapshot => {
+        if (snapshot.exists()) {
+            return snapshot.val(); // Return the student details as an object
+        } else {
+            console.log("Student not found in the database.");
+            return null; // Return null if no data exists for the student
+        }
+    }).catch(error => {
+        console.error("Error fetching student details:", error);
+        throw error; // Propagate the error for further handling
+    });
+}
+
+
+
+
+async function populateStudentDetails(student) {
+
+    document.getElementById('studentName_01').value = student.name;
+    document.getElementById('studentId_01').value = student.id;
+    document.getElementById('studentEmail_01').value = student.email;
+    document.getElementById('studentPhone_01').value = student.phone;
+    document.getElementById('studentBatch_01').value = student.batch;
+    try {
+        // Fetch the available courses from Firebase
+        const subjectsRef = ref(db, 'Data/subjects');
+        const snapshot = await get(subjectsRef);
+
+        if (snapshot.exists()) {
+            const availableCourses = snapshot.val(); // Assuming this is an array of course names
+            const courseDropdowns = document.getElementById('courseDropdowns_01');
+            courseDropdowns.innerHTML = ''; // Clear existing courses
+
+            student.courses.forEach(course => {
+                const courseRow = document.createElement('div');
+                courseRow.classList.add('courseRow');
+
+                const select = document.createElement('select');
+                select.classList.add('courseSelect_01');
+
+                // Populate the dropdown options
+                select.innerHTML = `<option value="">Select a Course</option>`;
+                availableCourses.forEach(availableCourse => {
+                    const option = document.createElement('option');
+                    option.value = availableCourse;
+                    option.textContent = availableCourse;
+                    select.appendChild(option);
+                });
+
+                // Set the selected value
+                select.value = course; // Set the value to match the student's course
+                courseRow.appendChild(select);
+                courseDropdowns.appendChild(courseRow);
+            });
+        } else {
+            console.error("No subjects found in the database.");
+        }
+    } catch (error) {
+        console.error("Error fetching available courses:", error);
+    }
+}
+
+
+
+
+function handleStudentSelection() {
+    const studentSelect = document.getElementById('studentSelect');
+    const studentId = studentSelect.value;
+
+    if (studentId) {
+        console.log("Selected : " + studentId);
+        fetchStudentDetails(studentId).then(student => {
+            if (student) {
+                console.log("Clear to go ...");
+                // populateStudentDetails(student);
+                populateCourses(student);
+            }
+        }).catch(error => {
+            console.error("Failed to fetch student details:", error);
+        });
+    }
+}
+
+document.getElementById('studentSelect').addEventListener('change', handleStudentSelection);
+
+
+// Form submission to update student
+// document.getElementById('editStudentForm').addEventListener('submit', async function (event) {
+//     event.preventDefault();
+
+//     const studentId = document.getElementById('studentId').value;
+//     const updatedDetails = {
+//         name: document.getElementById('studentName').value,
+//         email: document.getElementById('studentEmail').value,
+//         phone: document.getElementById('studentPhone').value,
+//         batch: document.getElementById('studentBatch').value,
+//         courses: Array.from(document.querySelectorAll('.courseSelect')).map(select => select.value),
+//     };
+
+//     await fetch(`/api/students/${studentId}`, {
+//         method: 'PUT', // Replace with your update method
+//         headers: { 'Content-Type': 'application/json' },
+//         body: JSON.stringify(updatedDetails),
+//     });
+
+//     alert('Student details updated successfully!');
+// });
+
+
+document.getElementById('editStudentForm').addEventListener('submit', function (event) {
+    event.preventDefault();
+
+    const studentId = document.getElementById('studentName_01').value;
+    const updatedDetails = {
+        name: document.getElementById('studentName_01').value,
+        id: document.getElementById('studentId_01').value,
+        email: document.getElementById('studentEmail_01').value,
+        phone: document.getElementById('studentPhone_01').value,
+        batch: document.getElementById('studentBatch_01').value,
+        courses: Array.from(document.querySelectorAll('.courseSelect_01')).map(select => select.value),
+    };
+
+    try {
+        // Update student details in Firebase
+        const studentRef = ref(db, `students/${studentId}`);
+        update(studentRef, updatedDetails);
+
+        alert('Student details updated successfully!');
+    } catch (error) {
+        console.error('Error updating student details:', error);
+        alert('Failed to update student details. Please try again.');
+    }
+});
+
+// Initialize the form
+fetchAllStudents();
+
+
+const courseDropdowns = document.getElementById('courseDropdowns_01');
+const addCourseBtn = document.getElementById('addCourseBtn_01');
+var availableCourses_01;
+
+
+async function addCourseRow(selectedValue = "") {
+    try {
+        // Fetch the available courses from Firebase
+        const subjectsRef = ref(db, 'Data/subjects');
+        const snapshot =await get(subjectsRef);
+
+        if (snapshot.exists()) {
+            availableCourses_01 = snapshot.val(); // Assuming this is an array of course names
+        } else {
+            console.error("No subjects found in the database.");
+        }
+
+    } catch (error) {
+        console.error("Error fetching available courses:", error);
+    }
+
+
+
+
+
+
+
+
+
+
+    const courseRow = document.createElement('div');
+    courseRow.classList.add('courseRow');
+    courseRow.style.display = 'flex';
+    courseRow.style.alignItems = 'center';
+
+    // Create the course select dropdown
+    const select = document.createElement('select');
+    select.classList.add('courseSelect_01');
+    select.innerHTML = `<option value="">Select a Course</option>`;
+    availableCourses_01.forEach(course => {
+        const option = document.createElement('option');
+        option.value = course;
+        option.textContent = course;
+        select.appendChild(option);
+    });
+    select.value = selectedValue; // Set the selected value if provided
+
+    // Create the remove button
+    const removeBtn = document.createElement('button');
+    removeBtn.textContent = "x";
+    removeBtn.style.backgroundColor = 'rgb(255,0,0)';
+    removeBtn.style.borderRadius = '5px';
+    removeBtn.type = "button";
+    removeBtn.style.marginLeft = "10px";
+    removeBtn.onclick = () => {
+        courseDropdowns.removeChild(courseRow);
+    };
+
+    // Append the select and remove button to the course row
+    courseRow.appendChild(select);
+    courseRow.appendChild(removeBtn);
+
+    // Append the course row to the container
+    courseDropdowns.appendChild(courseRow);
+}
+
+
+addCourseBtn.addEventListener('click', () => {
+    addCourseRow();
+});
+
+function populateCourses(student) {
+
+
+    document.getElementById('studentName_01').value = student.name;
+    document.getElementById('studentId_01').value = student.id;
+    document.getElementById('studentEmail_01').value = student.email;
+    document.getElementById('studentPhone_01').value = student.phone;
+    document.getElementById('studentBatch_01').value = student.batch;
+
+    courseDropdowns.innerHTML = ''; // Clear existing courses
+    student.courses.forEach(course => addCourseRow(course));
+}
