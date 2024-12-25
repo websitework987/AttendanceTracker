@@ -248,7 +248,7 @@ button:hover {
 }
 
 #markAttendanceButton {
-    display: none;
+    /* display: none; */
     background-color: #28a745;
     color: white;
     border: none;
@@ -300,4 +300,80 @@ button:hover {
 /* Current Day Checkbox Column */
 .attendance-table td:last-child {
     text-align: center;
+}
+
+
+
+.present {
+    /* background-color: #4CAF50; Green */
+    font-weight: bold;
+    text-align: center;
+    color: blue;
+}
+
+.absent {
+    /* background-color: #f44336; Red */
+    font-weight: bold;
+    text-align: center;
+    color: red;
+}
+
+.leave {
+    /* background-color: #8e44ad; Purple */
+    font-weight: bold;
+    text-align: center;
+    color: green;
+}
+
+.empty{
+    text-align: center;
+}
+
+
+.msgClass{
+    font-size: xx-large;
+    font-style: italic;
+    color: red;
+    text-align: center;
+    font-weight: 500;
+    /* font-size-adjust: 12px; */
+}
+
+
+
+.courseSelect{
+    width: 300px;
+    padding: 5px;
+}
+
+.removeCourseBtn{
+    /* padding: 5px; */
+    margin:5px;
+    padding:5px;
+    background-color: rgb(255, 77, 77);
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    text-align: center;
+    justify-content: center;
+}
+
+.removeCourseBtn:hover{
+    background-color: rgb(202, 6, 6);
+}
+
+.addCourseBtn{
+    margin: 5px;
+    padding: 5px;
+    border-radius: 5px;
+    height: 40px;
+    width: 30px;
+    justify-content: center;
+    text-align: center;
+}
+
+
+
+.table_row_Class{
+    line-height: 15px;
 }

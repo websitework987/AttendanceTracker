@@ -27,50 +27,64 @@
                     </div>
                 </div> -->
                 <div id="logoutButton">
-                    <center><button style="margin: 5px; border-radius:5px; background-color:rgb(236, 26, 26);">Logout</button></center>
+                    <center><button style="margin: 5px; border-radius:5px; background-color:rgb(236, 26, 26);" title="For Logout">Logout</button></center>
                 </div>
             </div>
         </div>
 
         <div class="tabs">
-            <button class="tab-button active" id="addStudentTab">Add Student</button>
-            <button class="tab-button" id="markAttendanceTab">Mark Attendance</button>
+            <button class="tab-button active " id="addStudentTab" title="For Adding new Students">Add Student</button>
+            <button class="tab-button " id="markAttendanceTab" title="For Attendance and Time Table Editing">Mark Attendance</button>
         </div>
 
-        <div id="addStudent" class="tab-content">
+        <div id="addStudent" class="tab-content" >
             <h3>
                 <center>Add Student</center>
             </h3>
             <form id="addStudentForm">
                 <div style="display: flex;">
                     <div class="left_block mt-4">
-                        <div><label for="studentName" style="width: 110px;">Student Name</label>
-                            <input type="text" id="studentName" required>
+                        <div>
+                            <label for="studentName" style="width: 110px;">Student Name</label>
+                            <input type="text" id="studentName" placeholder="Student Name" required>
                         </div>
-                        <div><label for="studentEmail" style="width: 110px;">Email</label>
-                            <input type="email" id="studentEmail" required>
+                        <div>
+                            <label for="studentId" style="width: 110px;">Student Id</label>
+                            <input type="text" id="studentId" placeholder="Student Id" required>
                         </div>
-                        <div><label for="studentPhone" style="width: 110px;">Phone No.</label>
-                            <input type="text" id="studentPhone" required>
+                        <div>
+                            <label for="studentEmail" style="width: 110px;">Email</label>
+                            <input type="email" id="studentEmail" placeholder="Email" required>
                         </div>
-                        <div><label for="studentBatch" style="width: 110px;">Batch</label>
-                            <input type="text" id="studentBatch" required>
+                        <div>
+                            <label for="studentPhone" style="width: 110px;">Phone No.</label>
+                            <input type="text" id="studentPhone" placeholder="Phone No." required>
+                        </div>
+                        <div>
+                            <label for="studentBatch" style="width: 110px;">Batch</label>
+                            <input type="text" id="studentBatch" placeholder="Batch" required>
                         </div>
                     </div>
                     <div class="right_block">
                         <label>Courses:</label>
-                        <div id="courseCheckboxes">
-                            <div><label><input type="checkbox" value="Mathematics"> Mathematics</label></div>
-                            <div><label><input type="checkbox" value="Science"> Science</label></div>
-                            <div><label><input type="checkbox" value="History"> History</label></div>
-                            <div><label><input type="checkbox" value="Literature"> Literature</label></div>
-                            <div><label><input type="checkbox" value="Art"> Art</label></div>
+                        <div id="courseDropdowns">
+                            <div class="courseRow">
+                                <select class="courseSelect">
+                                    <option value="">Select a Course</option>
+                                </select>
+                                <button type="button" class="addCourseBtn" title="Add More Options">+</button>
+                            </div>
                         </div>
                     </div>
                 </div>
-
-                <div><button type="submit" style="border-radius: 5px;">Add Student</button></div>
+                <div>
+                    <button type="submit" style="border-radius: 5px;">Add Student</button>
+                </div>
             </form>
+            
+            
+            
+            
         </div>
 
         <!-- <div id="markAttendance" class="tab-content" style="display:none;">
@@ -84,7 +98,7 @@
             <button id="markAttendanceButton" onclick="markAttendance()" style="display:none;">Mark Attendance</button>
         </div> -->
 
-        <div id="markAttendance" class="tab-content" style="display:none;">
+        <div id="markAttendance" class="tab-content" style="display:none;" >
             <div class="accordion" id="timetableAccordion">
                 <!-- Full Timetable Accordion -->
                 <div class="accordion-item">
