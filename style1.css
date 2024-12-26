@@ -2,7 +2,7 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 20px;
-    background-color: #f4f4f4;
+    background-color: #e6e6e6;
 }
 
 .h2_class{
@@ -10,6 +10,7 @@ body {
     font-size: 2em;
     margin: 10px;
     color: #4CAF50;
+    margin-bottom: 30px;
 }
 
 .container_01 {
@@ -18,7 +19,7 @@ body {
     background: white;
     padding: 10px;
     border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 }
 
 .left_block {
@@ -140,64 +141,6 @@ button:hover {
 
 
 
-
-.profile-container {
-    float: right;
-    position: relative;
-    /* top: 10px; */
-    /* right: 20px; */
-}
-
-.profile-icon {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    cursor: pointer;
-    background-color: #ddd;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 18px;
-    font-weight: bold;
-    color: #444;
-}
-
-.dropdown {
-    position: absolute;
-    top: 50px;
-    right: 0;
-    width: 200px;
-    background-color: #e1e4ff;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-    border-radius: 5px;
-    display: none;
-    flex-direction: column;
-    padding: 10px;
-}
-
-.dropdown.active {
-    display: flex;
-}
-
-.dropdown-item {
-    padding: 8px 10px;
-    border-bottom: 1px solid #ffffff;
-    cursor: pointer;
-    text-align: left;
-}
-
-.dropdown-item:last-child {
-    border-bottom: none;
-}
-
-.dropdown-item:hover {
-    border-radius: 5px;
-    background-color: #ffffff;
-}
-
-
-
-
 .timetable-table {
     width: 100%;
     border-collapse: collapse;
@@ -260,6 +203,7 @@ button:hover {
 
 #markAttendanceButton {
     /* display: none; */
+    /* position:inherit; */
     background-color: #28a745;
     color: white;
     border: none;
@@ -267,6 +211,9 @@ button:hover {
     cursor: pointer;
     border-radius: 5px;
     font-size: 16px;
+    /* float: right; */
+    /* right: 50px; */
+    /* margin-left: auto; */
 }
 
 #markAttendanceButton:hover {
@@ -357,10 +304,17 @@ button:hover {
     padding: 5px;
 }
 
+.courseSelect_01{
+    width: 300px;
+    padding: 5px;
+}
+
 .removeCourseBtn{
     /* padding: 5px; */
     margin:5px;
     padding:5px;
+    font-weight: 700;
+    /* font-size: xx-large; */
     background-color: rgb(255, 77, 77);
     width: 35px;
     height: 35px;
@@ -382,9 +336,316 @@ button:hover {
     justify-content: center;
     text-align: center;
 }
+#addCourseBtn_01{
+    /* font-size: larger; */
+    height: 40px; 
+    width: 30px;
+    font-weight: 800;
+    font-size: x-large;
+    margin: auto;
+    padding:5px;
+    padding-top: 0px;
+    border-radius: 5px;
+    /* justify-content: center; */
+    /* text-align: center; */
+}
+
 
 
 
 .table_row_Class{
     line-height: 15px;
 }
+
+
+
+
+
+
+
+
+
+#logoutButton{
+    flex: 1;
+}
+
+#logoutButton button{
+    float: right;
+    border-radius: 5px;
+    background-color: red;
+}
+
+
+
+/* .profile-container{
+    flex: 1;
+}
+
+.profile-container .profile-icon{
+    float: right;
+    border-radius: 5px;
+    background-color: red;
+} */
+
+
+
+
+
+
+
+
+
+/* courses List Adding all  */
+
+.container_02 {
+    max-width: 600px;
+    margin: 50px auto;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.container_02 h1 {
+    text-align: center;
+}
+
+#course-list {
+    margin-top: 40px;
+}
+
+.course-item {
+    display: flex;
+    justify-content:space-between;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.course-item:last-child {
+    border-bottom: none;
+}
+
+.modal-content_01 button {
+    cursor: pointer;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    background: #007bff;
+    color: white;
+    font-size: 14px;
+}
+
+.modal-content_01 button:hover {
+    background: #0056b3;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content_01 {
+    background: white;
+    margin: 15% auto;
+    padding: 20px;
+    width: 80%;
+    max-width: 400px;
+    border-radius: 8px;
+    position: relative;
+}
+
+.close_02 {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.editButton{
+    /* float: right; */
+    border-radius: 5px;
+    /* height: 40px; */
+    font-size: medium;
+}
+
+.course-name {
+    flex: 1; /* Take up remaining space to push buttons to the right */
+    text-align: left; /* Ensure name is left-aligned */
+    font-size: larger;
+    font-weight: 500;
+}
+
+.button-group {
+    display: flex;
+    gap: 10px; /* Adds space between Edit and Delete buttons */
+}
+
+.deleteButton{
+    /* float: right; */
+    border-radius: 5px;
+    font-size: medium;
+}
+
+#add-course-btn{
+    margin-top: 20px;
+    border-radius: 5px;
+    font-size: large;
+    padding: 10px 15px;
+}
+
+
+
+
+
+/* Confirm model*/
+
+
+.modal_02 {
+    display: none; /* Hidden by default */
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content_02 {
+    background: rgb(255, 251, 251);
+    padding: 20px;
+    border-radius: 5px;
+    width: 35%;
+    text-align: center;
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: center;
+    /* justify-content: space-between; */
+    margin-top: 20px;
+}
+
+.modal-buttons button {
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+#confirmYesBtn {
+    background-color: red;
+    margin-right: 30px;
+    color: white;
+}
+
+#confirmNoBtn {
+    background-color: gray;
+    margin-left: 30px;
+    color: white;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+.heading_02{
+    text-decoration: solid;
+    text-decoration: underline;
+}
+
+
+
+
+
+
+/* Model Profile Icon */
+/* Profile container */
+.profile-container {
+    flex: 1;
+    /* position: relative; */
+    /* display: inline-block; */
+    /* float: right; Place the profile icon in the top-right corner */
+    margin: 10px;
+}
+
+/* Profile icon styling */
+.profile-icon {
+    float: right;
+    width: 40px;
+    height: 40px;
+    background-color: #007bff;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+}
+
+/* Dropdown modal styling */
+.dropdown {
+    position: absolute;
+    top: 170px;
+    right: 30px;
+    padding: 10px;
+    background-color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    overflow: hidden;
+    display: none; /* Initially hidden */
+    z-index: 1000;
+    width: 250px; /* Set a fixed width for the dropdown */
+}
+
+/* Dropdown item styling */
+.dropdown-item {
+    padding: 10px;
+    font-size: 14px;
+    color: #333;
+    border-bottom: 1px solid #ddd;
+}
+
+.dropdown-item:last-child {
+    border-bottom: none;
+}
+
+.dropdown-item:hover {
+    background-color: #f2f2f2;
+}
+
+/* Logout button styling */
+/* #logoutButton button {
+    width: 90%;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 5px 0;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#logoutButton button:hover {
+    background-color: #0056b3;
+} */

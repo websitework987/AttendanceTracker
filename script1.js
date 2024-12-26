@@ -1,7 +1,7 @@
 
 // Import Firebase modules
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.8/firebase-app.js";
-import { getDatabase, ref, set, onValue, update, get } from "https://www.gstatic.com/firebasejs/9.6.8/firebase-database.js";
+import { getDatabase, ref, set, onValue, update, get, remove } from "https://www.gstatic.com/firebasejs/9.6.8/firebase-database.js";
 
 // Your Firebase configuration
 const firebaseConfig = {
@@ -134,6 +134,49 @@ function fetchCoursesFromDatabaseAndUpdate() {
         })
         .catch((error) => {
             console.error('Error fetching courses:', error);
+            // Create a popup message
+            const popup = document.createElement("div");
+            popup.id = "login-popup";
+            popup.textContent = "Network Error ! Try After Sometime";
+            document.body.appendChild(popup);
+
+            // Style the popup
+            const style = document.createElement("style");
+            style.textContent = `
+                    #login-popup {
+                        position: fixed;
+                        top: -50px;
+                        left: 50%;
+                        transform: translateX(-50%);
+                        background-color: rgb(255,0,0);
+                        color: white;
+                        padding: 10px 20px;
+                        border-radius: 5px;
+                        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                        font-size: 16px;
+                        opacity: 1;
+                        transition: opacity 0.5s ease, top 0.3s ease;
+                        z-index: 1000;
+                    }
+                    #login-popup.show {
+                        top: 20px;
+                    }
+                    #login-popup.hide {
+                        opacity: 0;
+                        top: -50px;
+                    }
+                `;
+            document.head.appendChild(style);
+
+            // Show the popup with an upward effect
+            setTimeout(() => {
+                popup.classList.add("show");
+            }, 10);
+
+            // Hide the popup after 1.7 seconds
+            setTimeout(() => {
+                popup.classList.add("hide");
+            }, 2000);
             courses = []; // Set courses to an empty array in case of an error
         });
 }
@@ -649,6 +692,7 @@ document.getElementById('addStudentTab').addEventListener('click', () => {
     document.getElementById('addStudentTab').classList.add('active');
     document.getElementById('markAttendanceTab').classList.remove('active');
     document.getElementById('editStudentTab').classList.remove('active');
+    document.getElementById('editCoursesTab').classList.remove('active');
     fetchCoursesFromDatabaseAndUpdate();
     showTab('addStudent');
 });
@@ -659,6 +703,7 @@ document.getElementById('markAttendanceTab').addEventListener('click', () => {
     document.getElementById('editCoursesTab').classList.remove('active');
     showTab('markAttendance');
     loadDataFromDatabase();
+
     // displayTimetable(); // Display the timetable when switching to the attendance tab
 });
 
@@ -668,6 +713,7 @@ document.getElementById('editStudentTab').addEventListener('click', () => {
     document.getElementById('markAttendanceTab').classList.remove('active');
     document.getElementById('editStudentTab').classList.add('active');
     document.getElementById('editCoursesTab').classList.remove('active');
+    populateCourses("");
     showTab('editStudent');
 });
 
@@ -681,6 +727,45 @@ document.getElementById('editCoursesTab').addEventListener('click', () => {
 });
 fetchCoursesFromDatabaseAndUpdate();
 
+
+
+
+
+
+
+
+
+
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    const profileIcon = document.getElementById('profileIcon');
+    const profileDropdown = document.getElementById('profileDropdown');
+
+    // Function to toggle the dropdown visibility
+    const toggleDropdown = () => {
+        const isDropdownVisible = profileDropdown.style.display === 'block';
+        profileDropdown.style.display = isDropdownVisible ? 'none' : 'block';
+    };
+
+    // Function to close the dropdown
+    const closeDropdown = () => {
+        profileDropdown.style.display = 'none';
+    };
+
+    // Add click event to profile icon
+    profileIcon.addEventListener('click', (event) => {
+        event.stopPropagation(); // Prevent click from propagating to the document
+        toggleDropdown();
+    });
+
+    // Close the dropdown when clicking anywhere else
+    document.addEventListener('click', (event) => {
+        if (!profileDropdown.contains(event.target)) {
+            closeDropdown();
+        }
+    });
+});
 
 
 
@@ -838,9 +923,56 @@ function loadDataFromDatabase() {
                 };
                 console.log("No timetable data found. Using default.");
             }
+            generateCurrentDayTimetable();
             generateFullTimetable(); // Render timetable after loading
+
         })
-        .catch((error) => console.error("Error fetching timetable data:", error));
+        .catch((error) => {
+            // Create a popup message
+            console.error("Error fetching timetable data:", error);
+            const popup = document.createElement("div");
+            popup.id = "login-popup";
+            popup.textContent = "Network Error ! Try After Sometime";
+            document.body.appendChild(popup);
+
+            // Style the popup
+            const style = document.createElement("style");
+            style.textContent = `
+                    #login-popup {
+                        position: fixed;
+                        top: -50px;
+                        left: 50%;
+                        transform: translateX(-50%);
+                        background-color: rgb(255,0,0);
+                        color: white;
+                        padding: 10px 20px;
+                        border-radius: 5px;
+                        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                        font-size: 16px;
+                        opacity: 1;
+                        transition: opacity 0.5s ease, top 0.3s ease;
+                        z-index: 1000;
+                    }
+                    #login-popup.show {
+                        top: 20px;
+                    }
+                    #login-popup.hide {
+                        opacity: 0;
+                        top: -50px;
+                    }
+                `;
+            document.head.appendChild(style);
+
+            // Show the popup with an upward effect
+            setTimeout(() => {
+                popup.classList.add("show");
+            }, 10);
+
+            // Hide the popup after 1.7 seconds
+            setTimeout(() => {
+                popup.classList.add("hide");
+            }, 2000);
+        });
 
     // Fetch subjects data
     get(subjectsRef)
@@ -852,9 +984,53 @@ function loadDataFromDatabase() {
                 console.log("No subjects data found. Using default subjects.");
             }
         })
-        .catch((error) => console.error("Error fetching subjects data:", error));
-}
+        .catch((error) => { 
+            console.error("Error fetching subjects data:", error);
+            // Create a popup message
+            const popup = document.createElement("div");
+            popup.id = "login-popup";
+            popup.textContent = "Network Error ! Try After Sometime";
+            document.body.appendChild(popup);
 
+            // Style the popup
+            const style = document.createElement("style");
+            style.textContent = `
+                    #login-popup {
+                        position: fixed;
+                        top: -50px;
+                        left: 50%;
+                        transform: translateX(-50%);
+                        background-color: rgb(255,0,0);
+                        color: white;
+                        padding: 10px 20px;
+                        border-radius: 5px;
+                        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                        font-size: 16px;
+                        opacity: 1;
+                        transition: opacity 0.5s ease, top 0.3s ease;
+                        z-index: 1000;
+                    }
+                    #login-popup.show {
+                        top: 20px;
+                    }
+                    #login-popup.hide {
+                        opacity: 0;
+                        top: -50px;
+                    }
+                `;
+            document.head.appendChild(style);
+
+            // Show the popup with an upward effect
+            setTimeout(() => {
+                popup.classList.add("show");
+            }, 10);
+
+            // Hide the popup after 1.7 seconds
+            setTimeout(() => {
+                popup.classList.add("hide");
+            }, 2000);
+        } );
+    }
 // Save data to Firebase
 function saveDataToDatabase() {
     set(timetableRef, timetable)
@@ -927,9 +1103,10 @@ function generateFullTimetable() {
     editButton.id = "editButton";
     // editButton.style.backgroundColor = "#ffeb3b";
     editButton.style.color = "#fff";
+    editButton.style.float = 'right';
     editButton.style.borderRadius = "5px";
     editButton.style.padding = "10px 15px";
-    editButton.style.margin = "5px";
+    editButton.style.margin = "5px 0px";
     editButton.addEventListener("click", enableEditMode);
 
     const saveButton = document.createElement("button");
@@ -940,7 +1117,7 @@ function generateFullTimetable() {
     saveButton.style.color = "#000";
     saveButton.style.border = "none";
     saveButton.style.padding = "10px 15px";
-    saveButton.style.margin = "5px";
+    saveButton.style.margin = "5px 0px";
     saveButton.style.borderRadius = "5px";
     saveButton.style.cursor = "pointer";
     saveButton.addEventListener("click", () => {
@@ -1204,6 +1381,49 @@ function fetchAllStudents() {
         }
     }).catch(error => {
         console.error("Error fetching students:", error);
+        // Create a popup message
+        const popup = document.createElement("div");
+        popup.id = "login-popup";
+        popup.textContent = "Network Error ! Try After Sometime";
+        document.body.appendChild(popup);
+
+        // Style the popup
+        const style = document.createElement("style");
+        style.textContent = `
+                #login-popup {
+                    position: fixed;
+                    top: -50px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    background-color: rgb(255,0,0);
+                    color: white;
+                    padding: 10px 20px;
+                    border-radius: 5px;
+                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                    font-size: 16px;
+                    opacity: 1;
+                    transition: opacity 0.5s ease, top 0.3s ease;
+                    z-index: 1000;
+                }
+                #login-popup.show {
+                    top: 20px;
+                }
+                #login-popup.hide {
+                    opacity: 0;
+                    top: -50px;
+                }
+            `;
+        document.head.appendChild(style);
+
+        // Show the popup with an upward effect
+        setTimeout(() => {
+            popup.classList.add("show");
+        }, 10);
+
+        // Hide the popup after 1.7 seconds
+        setTimeout(() => {
+            popup.classList.add("hide");
+        }, 2200);
     });
 }
 
@@ -1227,97 +1447,29 @@ function fetchStudentDetails(studentId) {
 
 
 
-async function populateStudentDetails(student) {
-
-    document.getElementById('studentName_01').value = student.name;
-    document.getElementById('studentId_01').value = student.id;
-    document.getElementById('studentEmail_01').value = student.email;
-    document.getElementById('studentPhone_01').value = student.phone;
-    document.getElementById('studentBatch_01').value = student.batch;
-    try {
-        // Fetch the available courses from Firebase
-        const subjectsRef = ref(db, 'Data/subjects');
-        const snapshot = await get(subjectsRef);
-
-        if (snapshot.exists()) {
-            const availableCourses = snapshot.val(); // Assuming this is an array of course names
-            const courseDropdowns = document.getElementById('courseDropdowns_01');
-            courseDropdowns.innerHTML = ''; // Clear existing courses
-
-            student.courses.forEach(course => {
-                const courseRow = document.createElement('div');
-                courseRow.classList.add('courseRow');
-
-                const select = document.createElement('select');
-                select.classList.add('courseSelect_01');
-
-                // Populate the dropdown options
-                select.innerHTML = `<option value="">Select a Course</option>`;
-                availableCourses.forEach(availableCourse => {
-                    const option = document.createElement('option');
-                    option.value = availableCourse;
-                    option.textContent = availableCourse;
-                    select.appendChild(option);
-                });
-
-                // Set the selected value
-                select.value = course; // Set the value to match the student's course
-                courseRow.appendChild(select);
-                courseDropdowns.appendChild(courseRow);
-            });
-        } else {
-            console.error("No subjects found in the database.");
-        }
-    } catch (error) {
-        console.error("Error fetching available courses:", error);
-    }
-}
-
-
-
 
 function handleStudentSelection() {
     const studentSelect = document.getElementById('studentSelect');
     const studentId = studentSelect.value;
 
     if (studentId) {
-        console.log("Selected : " + studentId);
+        // console.log("Selected : " + studentId);
         fetchStudentDetails(studentId).then(student => {
             if (student) {
-                console.log("Clear to go ...");
+                // console.log("Clear to go ...");
                 // populateStudentDetails(student);
                 populateCourses(student);
             }
         }).catch(error => {
             console.error("Failed to fetch student details:", error);
         });
+    } else {
+        populateCourses("");
     }
 }
 
 document.getElementById('studentSelect').addEventListener('change', handleStudentSelection);
 
-
-// Form submission to update student
-// document.getElementById('editStudentForm').addEventListener('submit', async function (event) {
-//     event.preventDefault();
-
-//     const studentId = document.getElementById('studentId').value;
-//     const updatedDetails = {
-//         name: document.getElementById('studentName').value,
-//         email: document.getElementById('studentEmail').value,
-//         phone: document.getElementById('studentPhone').value,
-//         batch: document.getElementById('studentBatch').value,
-//         courses: Array.from(document.querySelectorAll('.courseSelect')).map(select => select.value),
-//     };
-
-//     await fetch(`/api/students/${studentId}`, {
-//         method: 'PUT', // Replace with your update method
-//         headers: { 'Content-Type': 'application/json' },
-//         body: JSON.stringify(updatedDetails),
-//     });
-
-//     alert('Student details updated successfully!');
-// });
 
 
 document.getElementById('editStudentForm').addEventListener('submit', function (event) {
@@ -1338,7 +1490,55 @@ document.getElementById('editStudentForm').addEventListener('submit', function (
         const studentRef = ref(db, `students/${studentId}`);
         update(studentRef, updatedDetails);
 
-        alert('Student details updated successfully!');
+        // alert('Student details updated successfully!');
+        // Create a popup message
+        const popup = document.createElement("div");
+        popup.id = "login-popup";
+        popup.textContent = `Student details updated successfully!`;
+        document.body.appendChild(popup);
+        // Style the popup
+        const style = document.createElement("style");
+        style.textContent = `
+        #login-popup {
+            position: fixed;
+            top: -50px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color:#4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            font-size: 16px;
+            opacity: 1;
+            transition: opacity 0.5s ease, top 0.3s ease;
+            z-index: 1000;
+        }
+
+        #login-popup.show {
+            top: 20px;
+        }
+
+        #login-popup.hide {
+            opacity: 0;
+            top: -50px;
+        }
+        `;
+        document.head.appendChild(style);
+
+        // Show the popup with an upward effect
+        setTimeout(() => {
+            popup.classList.add("show");
+        }, 10);
+
+
+        populateCourses("");
+
+
+        // Hide the popup after 1.7 seconds
+        setTimeout(() => {
+            popup.classList.add("hide");
+        }, 1400);
     } catch (error) {
         console.error('Error updating student details:', error);
         alert('Failed to update student details. Please try again.');
@@ -1358,7 +1558,7 @@ async function addCourseRow(selectedValue = "") {
     try {
         // Fetch the available courses from Firebase
         const subjectsRef = ref(db, 'Data/subjects');
-        const snapshot =await get(subjectsRef);
+        const snapshot = await get(subjectsRef);
 
         if (snapshot.exists()) {
             availableCourses_01 = snapshot.val(); // Assuming this is an array of course names
@@ -1369,15 +1569,6 @@ async function addCourseRow(selectedValue = "") {
     } catch (error) {
         console.error("Error fetching available courses:", error);
     }
-
-
-
-
-
-
-
-
-
 
     const courseRow = document.createElement('div');
     courseRow.classList.add('courseRow');
@@ -1398,11 +1589,12 @@ async function addCourseRow(selectedValue = "") {
 
     // Create the remove button
     const removeBtn = document.createElement('button');
-    removeBtn.textContent = "x";
+    removeBtn.classList.add('removeCourseBtn');
+    removeBtn.textContent = "X";
     removeBtn.style.backgroundColor = 'rgb(255,0,0)';
-    removeBtn.style.borderRadius = '5px';
+    // removeBtn.style.borderRadius = '5px';
     removeBtn.type = "button";
-    removeBtn.style.marginLeft = "10px";
+    // removeBtn.style.marginLeft = "10px";
     removeBtn.onclick = () => {
         courseDropdowns.removeChild(courseRow);
     };
@@ -1422,13 +1614,371 @@ addCourseBtn.addEventListener('click', () => {
 
 function populateCourses(student) {
 
+    if (student === "") {
 
-    document.getElementById('studentName_01').value = student.name;
-    document.getElementById('studentId_01').value = student.id;
-    document.getElementById('studentEmail_01').value = student.email;
-    document.getElementById('studentPhone_01').value = student.phone;
-    document.getElementById('studentBatch_01').value = student.batch;
+        document.getElementById('studentSelect').value = '';
+        document.getElementById('studentName_01').value = '';
+        document.getElementById('studentId_01').value = '';
+        document.getElementById('studentEmail_01').value = '';
+        document.getElementById('studentPhone_01').value = '';
+        document.getElementById('studentBatch_01').value = '';
 
-    courseDropdowns.innerHTML = ''; // Clear existing courses
-    student.courses.forEach(course => addCourseRow(course));
+        courseDropdowns.innerHTML = '';
+    } else {
+
+
+        document.getElementById('studentName_01').value = student.name;
+        document.getElementById('studentId_01').value = student.id;
+        document.getElementById('studentEmail_01').value = student.email;
+        document.getElementById('studentPhone_01').value = student.phone;
+        document.getElementById('studentBatch_01').value = student.batch;
+
+        courseDropdowns.innerHTML = ''; // Clear existing courses
+        student.courses.forEach(course => addCourseRow(course));
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//EditCourses
+
+
+const courseList = document.getElementById('course-list');
+const addCourseBtn_01 = document.getElementById('add-course-btn');
+const courseModal = document.getElementById('course-modal');
+const closeModal = document.getElementById('close-modal');
+const modalTitle = document.getElementById('modal-title');
+const courseNameInput = document.getElementById('course-name');
+const saveCourseBtn = document.getElementById('save-course-btn');
+
+// State Variables
+let editingCourseKey = null;
+
+// Load Courses
+function loadCourses() {
+    const coursesRef = ref(db, 'Data/subjects');
+    onValue(coursesRef, (snapshot) => {
+        courseList.innerHTML = '';
+        const courses = snapshot.val();
+        for (const key in courses) {
+            createCourseItem(key, courses[key]);
+        }
+    });
+}
+
+
+
+function createCourseItem(index, name) {
+    const courseItem = document.createElement('div');
+    courseItem.className = 'course-item';
+
+    const courseName = document.createElement('span');
+    courseName.className = 'course-name';
+    courseName.textContent = name;
+
+    const buttonGroup = document.createElement('div');
+    buttonGroup.className = 'button-group';
+
+    const editBtn = document.createElement('button');
+    editBtn.textContent = 'Edit';
+    editBtn.classList.add('editButton');
+    editBtn.addEventListener('click', () => openModal('Edit Course', index, name));
+
+    const deleteBtn = document.createElement('button');
+    deleteBtn.textContent = 'Remove';
+    deleteBtn.classList.add('deleteButton');
+    deleteBtn.style.background = 'red';
+    deleteBtn.addEventListener('click', () => deleteCourse(index));
+
+    buttonGroup.appendChild(editBtn);
+    buttonGroup.appendChild(deleteBtn);
+
+    courseItem.appendChild(courseName);
+    courseItem.appendChild(buttonGroup);
+
+    courseList.appendChild(courseItem);
+}
+
+
+
+
+function saveCourse() {
+    const courseName = courseNameInput.value.trim();
+    if (!courseName) {
+        alert('Please enter a course name.');
+        return;
+    }
+
+    const subjectsRef = ref(db, 'Data/subjects');
+    if (editingCourseKey !== null) {
+        // Update the specific index in the subjects array
+        get(subjectsRef).then((snapshot) => {
+            if (snapshot.exists()) {
+                const subjects = snapshot.val();
+                subjects[editingCourseKey] = courseName; // Update the specific course
+                set(subjectsRef, subjects)
+                    .then(() => {
+                        // console.log('Course updated successfully.');
+                        closeModalFn();
+                        // Create a popup message
+                        const popup = document.createElement("div");
+                        popup.id = "login-popup";
+                        popup.textContent = `${courseName} updated successfully.`;
+                        document.body.appendChild(popup);
+
+                        // Style the popup
+                        const style = document.createElement("style");
+                        style.textContent = `
+                        #login-popup {
+                            position: fixed;
+                            top: -50px;
+                            left: 50%;
+                            transform: translateX(-50%);
+                            background-color:#4CAF50;
+                            color: white;
+                            padding: 10px 20px;
+                            border-radius: 5px;
+                            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                            font-size: 16px;
+                            opacity: 1;
+                            transition: opacity 0.5s ease, top 0.3s ease;
+                            z-index: 1000;
+                        }
+
+                        #login-popup.show {
+                            top: 20px;
+                        }
+
+                        #login-popup.hide {
+                            opacity: 0;
+                            top: -50px;
+                        }
+                        `;
+                        document.head.appendChild(style);
+
+                        // Show the popup with an upward effect
+                        setTimeout(() => {
+                            popup.classList.add("show");
+                        }, 10);
+
+                        // Hide the popup after 1.7 seconds
+                        setTimeout(() => {
+                            popup.classList.add("hide");
+                        }, 1400);
+                    })
+                    .catch((error) => {
+                        console.error('Error updating course:', error);
+                    });
+            } else {
+                console.error('Subjects list not found in the database.');
+            }
+        });
+    } else {
+        // Add a new course
+        get(subjectsRef).then((snapshot) => {
+            let subjects = snapshot.exists() ? snapshot.val() : [];
+            subjects.push(courseName); // Add the new course to the array
+            set(subjectsRef, subjects)
+                .then(() => {
+                    // console.log('Course added successfully.');
+                    closeModalFn();
+                    // Create a popup message
+                    const popup = document.createElement("div");
+                    popup.id = "login-popup";
+                    popup.textContent = `${courseName} added successfully.`;
+                    document.body.appendChild(popup);
+
+                    // Style the popup
+                    const style = document.createElement("style");
+                    style.textContent = `
+                    #login-popup {
+                        position: fixed;
+                        top: -50px;
+                        left: 50%;
+                        transform: translateX(-50%);
+                        background-color:#4CAF50;
+                        color: white;
+                        padding: 10px 20px;
+                        border-radius: 5px;
+                        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                        font-size: 16px;
+                        opacity: 1;
+                        transition: opacity 0.5s ease, top 0.3s ease;
+                        z-index: 1000;
+                    }
+
+                    #login-popup.show {
+                        top: 20px;
+                    }
+
+                    #login-popup.hide {
+                        opacity: 0;
+                        top: -50px;
+                    }
+                    `;
+                    document.head.appendChild(style);
+
+                    // Show the popup with an upward effect
+                    setTimeout(() => {
+                        popup.classList.add("show");
+                    }, 10);
+
+                    // Hide the popup after 1.7 seconds
+                    setTimeout(() => {
+                        popup.classList.add("hide");
+                    }, 1400);
+                })
+                .catch((error) => {
+                    console.error('Error adding course:', error);
+                });
+        });
+    }
+}
+
+
+
+let courseToDelete = null; // Temporary variable to store the course key to delete
+
+function deleteCourse(key) {
+    courseToDelete = key; // Store the course key
+    openConfirmModal(); // Open the confirmation modal
+}
+
+function openConfirmModal() {
+    const confirmModal = document.getElementById('confirmModal');
+    confirmModal.style.display = 'flex'; // Show the modal
+}
+
+function closeConfirmModal() {
+    const confirmModal = document.getElementById('confirmModal');
+    confirmModal.style.display = 'none'; // Hide the modal
+}
+
+// Handle modal button clicks
+document.getElementById('confirmYesBtn').addEventListener('click', () => {
+    if (courseToDelete !== null) {
+        remove(ref(db, `Data/subjects/${courseToDelete}`))
+            .then(() => {
+                console.log('Course deleted successfully.');
+
+                // Create a popup message
+                const popup = document.createElement("div");
+                popup.id = "login-popup";
+                popup.textContent = `Course deleted successfully.`;
+                document.body.appendChild(popup);
+
+                courseToDelete = null; // Reset the variable
+
+                // Style the popup
+                const style = document.createElement("style");
+                style.textContent = `
+                #login-popup {
+                    position: fixed;
+                    top: -50px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    background-color:rgb(255,0,0);
+                    color: white;
+                    padding: 10px 20px;
+                    border-radius: 5px;
+                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                    font-size: 16px;
+                    opacity: 1;
+                    transition: opacity 0.5s ease, top 0.3s ease;
+                    z-index: 1000;
+                }
+
+                #login-popup.show {
+                    top: 20px;
+                }
+
+                #login-popup.hide {
+                    opacity: 0;
+                    top: -50px;
+                }
+                `;
+                document.head.appendChild(style);
+
+                // Show the popup with an upward effect
+                setTimeout(() => {
+                    popup.classList.add("show");
+                }, 10);
+
+                // Hide the popup after 1.7 seconds
+                setTimeout(() => {
+                    popup.classList.add("hide");
+                }, 1400);
+            })
+            .catch((error) => {
+                console.error('Error deleting course:', error);
+            });
+    }
+    closeConfirmModal(); // Close the modal
+});
+
+document.getElementById('confirmNoBtn').addEventListener('click', () => {
+    courseToDelete = null; // Reset the variable
+    closeConfirmModal(); // Close the modal
+});
+
+// Delete Course
+// function deleteCourse(key) {
+//     if (confirm('Are you sure you want to delete this course?')) {
+//         remove(ref(db, `Data/subjects/${key}`));
+//     }
+// }
+
+// Open Modal
+function openModal(title, key = null, name = '') {
+    modalTitle.textContent = title;
+    courseNameInput.value = name;
+    editingCourseKey = key;
+    courseModal.style.display = 'block';
+}
+
+// Close Modal
+function closeModalFn() {
+    courseModal.style.display = 'none';
+    courseNameInput.value = '';
+    editingCourseKey = null;
+}
+
+// Event Listeners
+addCourseBtn_01.addEventListener('click', () => openModal('Add Course'));
+closeModal.addEventListener('click', closeModalFn);
+saveCourseBtn.addEventListener('click', saveCourse);
+window.addEventListener('click', (e) => {
+    if (e.target === courseModal) closeModalFn();
+});
+
+// Initialize
+loadCourses();
