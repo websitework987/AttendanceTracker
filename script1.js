@@ -414,16 +414,39 @@ document.getElementById('addStudentForm').addEventListener('submit', function (e
 
 
 
+function applyRedFlagLogic() {
+    const table = document.querySelector(".attendance-table");
+    // console.log(table);
+    if (!table) return;
 
+    const rows = table.querySelectorAll("tr.table_row_Class");
+    rows.forEach(row => {
+        // Get the last three attendance cells, including the current day cell
+        const attendanceCells = Array.from(row.querySelectorAll("td")).slice(-3);
 
+        // Map attendance statuses
+        const statuses = attendanceCells.map(cell => {
+            if (cell.querySelector('input[type="radio"]:checked')) {
+                return cell.querySelector('input[type="radio"]:checked').value; // Get selected radio button value
+            }
+            return cell.textContent.trim(); // For older days where attendance is plain text
+        });
 
+        // Check if all three statuses are 'A' (Absent)
+        const isRedFlag = statuses.every(status => status === 'A');
 
-
+        if (isRedFlag) {
+            row.classList.add('red-flag');
+        } else {
+            row.classList.remove('red-flag');
+        }
+    });
+}
 
 
 window.loadStudents = function (courseSelect) {
     course = courseSelect;
-    // console.log(course);
+
     if (course == '--' || course == "") {
         const studentList = document.getElementById('studentList');
         studentList.innerHTML = 'Select Your Subject';
@@ -435,7 +458,7 @@ window.loadStudents = function (courseSelect) {
 
         const studentsRef = ref(db, 'students');
         const currentDate = new Date();
-        const currentDateString = currentDate.toLocaleDateString(undefined, { day: '2-digit', month: 'short' }); // Format as DD Mon
+        const currentDateString = currentDate.toISOString().split('T')[0]; // Format as YYYY-MM-DD
 
         const previousDates = Array.from({ length: 5 }, (_, i) => {
             const date = new Date(currentDate);
@@ -449,13 +472,11 @@ window.loadStudents = function (courseSelect) {
 
         // Table header
         const headerRow = document.createElement('tr');
-
         const formattedDates = previousDates.map(dateString => {
             const date = new Date(dateString);
             return date.toLocaleDateString(undefined, { day: '2-digit', month: 'short' });
         });
-
-        headerRow.innerHTML = `<th>Student Name</th>${formattedDates.map(date => `<th>${date}</th>`).join('')}<th>${currentDateString}</th>`;
+        headerRow.innerHTML = `<th>Student Name</th><th>Phone Number</th>${formattedDates.map(date => `<th>${date}</th>`).join('')}<th>Today</th>`;
         table.appendChild(headerRow);
 
         const existingStudents = new Set(); // Track added students
@@ -467,80 +488,70 @@ window.loadStudents = function (courseSelect) {
                     existingStudents.add(childSnapshot.key); // Mark student as added
                     const attendanceRow = document.createElement('tr');
                     attendanceRow.classList.add("table_row_Class");
+
                     // Student Name Column
                     const nameCell = document.createElement('td');
                     nameCell.textContent = student.name;
                     attendanceRow.appendChild(nameCell);
 
+                    // Phone Number Column
+                    const phoneCell = document.createElement('td');
+                    phoneCell.textContent = student.phone || 'N/A';
+                    attendanceRow.appendChild(phoneCell);
 
+                    // Attendance Columns
+                    const attendanceStatusArray = [];
                     previousDates.forEach(date => {
                         const attendanceCell = document.createElement('td');
+                        const attendanceStatus = student.attendance?.[courseSelect]?.[date];
 
-                        // Check if the attendance for the student, course, and date exists
-                        const attendanceStatus = student.attendance?.[courseSelect]?.[date]; // Get the attendance status for this student, course, and date
-
-                        // If there's no attendance recorded for this date, show empty radio buttons
                         if (!attendanceStatus) {
-                            attendanceCell.textContent = '-'; // Leave
+                            attendanceCell.textContent = '-';
                             attendanceCell.className = 'empty';
                         } else {
-
-                            if (attendanceStatus === 'P') {
-                                attendanceCell.textContent = 'P'; // Present
-                                attendanceCell.className = 'present';
-                            } else if (attendanceStatus === 'A') {
-                                attendanceCell.textContent = 'A'; // Absent
-                                attendanceCell.className = 'absent';
-                            } else if (attendanceStatus === 'L') {
-                                attendanceCell.textContent = 'L'; // Leave
-                                attendanceCell.className = 'leave';
-                            }
+                            attendanceCell.textContent = attendanceStatus;
+                            attendanceCell.className = attendanceStatus === 'P' ? 'present' : (attendanceStatus === 'A' ? 'absent' : 'leave');
                         }
 
-                        // Append the attendance cell to the row
+                        attendanceStatusArray.push(attendanceStatus || '-');
                         attendanceRow.appendChild(attendanceCell);
                     });
 
-
-
-                    // Current Day Attendance Column with Radio Buttons for P, A, L
+                    // Current Day Attendance Column with Radio Buttons
                     const currentDayCell = document.createElement('td');
-                    // const currentDayAttendance = student.attendance?.[courseSelect]?.find(date => date === currentDate.toISOString().split('T')[0]);
+                    // const currentDayAttendance = student.attendance?.[courseSelect]?.[currentDateString];
                     const currentDayAttendance = student.attendance?.[courseSelect]?.[currentDate.toISOString().split('T')[0]];
-
-                    // Create radio buttons for Present (P), Absent (A), and Leave (L)
                     currentDayCell.innerHTML = `
-                    <label style="color: blue;">
-                        <input type="radio" name="attendance-${childSnapshot.key}" value="P" ${currentDayAttendance === 'P' ? 'checked' : ''} />
-                        P
-                    </label>
-                    <label style="color: red;">
-                        <input type="radio" name="attendance-${childSnapshot.key}" value="A" ${currentDayAttendance === 'A' ? 'checked' : ''} />
-                        A
-                    </label>
-                    <label style="color: green;">
-                        <input type="radio" name="attendance-${childSnapshot.key}" value="L" ${currentDayAttendance === 'L' ? 'checked' : ''} />
-                        L
-                    </label>
-                `;
-
-                    // If no data exists for the current day, make sure no radio button is selected
-                    if (!currentDayAttendance) {
-                        currentDayCell.querySelectorAll('input[type="radio"]').forEach(radio => radio.checked = false);
-                    }
-
+                        <label style="color: blue;">
+                            <input type="radio" name="attendance-${childSnapshot.key}" value="P" ${currentDayAttendance === 'P' ? 'checked' : ''} />
+                            P
+                        </label>
+                        <label style="color: red;">
+                            <input type="radio" name="attendance-${childSnapshot.key}" value="A" ${currentDayAttendance === 'A' ? 'checked' : ''} />
+                            A
+                        </label>
+                        <label style="color: green;">
+                            <input type="radio" name="attendance-${childSnapshot.key}" value="L" ${currentDayAttendance === 'L' ? 'checked' : ''} />
+                            L
+                        </label>
+                    `;
+                    attendanceStatusArray.push(currentDayAttendance || '-');
                     attendanceRow.appendChild(currentDayCell);
 
                     // Append Row to Table
                     table.appendChild(attendanceRow);
-
                 }
             });
+            
         });
-
         studentList.appendChild(table);
+        
     }
+
+    // Apply red-flag logic after rendering the table
+    applyRedFlagLogic();
 };
+
 
 
 
@@ -583,7 +594,7 @@ window.markAttendance = function () {
     const studentList = document.getElementById('studentList');
     const radioButtons = studentList.querySelectorAll('input[type="radio"]:checked'); // Select checked radio buttons
     const currentDate = new Date().toISOString().split('T')[0]; // Get current date in YYYY-MM-DD format
-
+    // 
     radioButtons.forEach(radioButton => {
         const studentName = radioButton.name.replace('attendance-', ''); // Use student ID
         // var course = radioButton.getAttribute('data-course'); // Get the course
@@ -621,6 +632,9 @@ window.markAttendance = function () {
             console.error('Error fetching student data: ', error);
         });
     });
+    
+    // loadStudents(course);    
+    applyRedFlagLogic();
     // Create and show the popup message
     const popup = document.createElement("div");
     popup.id = "login-popup";
@@ -738,34 +752,34 @@ fetchCoursesFromDatabaseAndUpdate();
 
 
 
-document.addEventListener('DOMContentLoaded', () => {
-    const profileIcon = document.getElementById('profileIcon');
-    const profileDropdown = document.getElementById('profileDropdown');
+// document.addEventListener('DOMContentLoaded', () => {
+//     const profileIcon = document.getElementById('profileIcon');
+//     const profileDropdown = document.getElementById('profileDropdown');
 
-    // Function to toggle the dropdown visibility
-    const toggleDropdown = () => {
-        const isDropdownVisible = profileDropdown.style.display === 'block';
-        profileDropdown.style.display = isDropdownVisible ? 'none' : 'block';
-    };
+//     // Function to toggle the dropdown visibility
+//     const toggleDropdown = () => {
+//         const isDropdownVisible = profileDropdown.style.display === 'block';
+//         profileDropdown.style.display = isDropdownVisible ? 'none' : 'block';
+//     };
 
-    // Function to close the dropdown
-    const closeDropdown = () => {
-        profileDropdown.style.display = 'none';
-    };
+//     // Function to close the dropdown
+//     const closeDropdown = () => {
+//         profileDropdown.style.display = 'none';
+//     };
 
-    // Add click event to profile icon
-    profileIcon.addEventListener('click', (event) => {
-        event.stopPropagation(); // Prevent click from propagating to the document
-        toggleDropdown();
-    });
+//     // Add click event to profile icon
+//     profileIcon.addEventListener('click', (event) => {
+//         event.stopPropagation(); // Prevent click from propagating to the document
+//         toggleDropdown();
+//     });
 
-    // Close the dropdown when clicking anywhere else
-    document.addEventListener('click', (event) => {
-        if (!profileDropdown.contains(event.target)) {
-            closeDropdown();
-        }
-    });
-});
+//     // Close the dropdown when clicking anywhere else
+//     document.addEventListener('click', (event) => {
+//         if (!profileDropdown.contains(event.target)) {
+//             closeDropdown();
+//         }
+//     });
+// });
 
 
 
@@ -883,16 +897,23 @@ logoutButton.addEventListener("click", () => {
 // let subjects = ["Math", "Science", "History", "Geography", "English"];
 
 // Set the data in Firebase Realtime Database
-// const databaseRef = ref(db, 'Data/'); // Replace 'your/path' with the actual location you want to store the data
+const databaseRef = ref(db, 'Data/timetable'); // Replace 'your/path' with the actual location you want to store the data
 // set(databaseRef, {
-//   timetable: timetable,
+//   timetable: timetable_01,
 //   subjects: subjects
 // })
+
+
+//Database Time Table saving once.
+
+// set(databaseRef,timetable1)
 //   .then(() => {
 //     console.log('Data successfully saved!');
 //   })
 //   .catch((error) => {
-//     console.error('Error saving data:', error);
+//     console.error('Error saving data:', error);});
+
+
 
 // References for database
 const timetableRef = ref(db, "Data/timetable");
@@ -1177,7 +1198,40 @@ function enableEditMode() {
     editButton.style.display = "none";
     saveButton.style.display = "inline-block";
 
+    const headerRow = table.querySelector("tr");
+    headerRow.querySelectorAll("th").forEach((header, colIndex) => {
+        if (colIndex === 0) return; // Skip the first column (Day names)
+
+        const currentTimeSlot = header.textContent.trim();
+
+        // Create an input element for editing the time slot
+        const timeSlotInput = document.createElement("input");
+        timeSlotInput.type = "text";
+        timeSlotInput.value = currentTimeSlot;
+        timeSlotInput.className = "time-slot-input";
+
+        // Update the timetable time slot when the input value changes
+        timeSlotInput.addEventListener("input", () => {
+            table.querySelectorAll("tr").forEach((row, rowIndex) => {
+                if (rowIndex === 0) return; // Skip the header row
+
+                const day = row.children[0].textContent.trim();
+                if (timetable[day] && timetable[day][colIndex - 1]) {
+                    timetable[day][colIndex - 1].time = timeSlotInput.value;
+                }
+            });
+            // console.log(timetable);
+        });
+
+        // Replace the header text with the input element
+        header.textContent = "";
+        header.appendChild(timeSlotInput);
+    });
+
+
+
     table.querySelectorAll("tr").forEach((row, rowIndex) => {
+        // if (rowIndex === 0) return;
         row.querySelectorAll("td").forEach((cell, colIndex) => {
             if (colIndex === 0) return; // Skip first column (Day names)
 
@@ -1207,15 +1261,17 @@ function enableEditMode() {
                 const selectedValue = dropdown.value;
                 const day = row.children[0].textContent.trim();
                 timetable[day][colIndex - 1] = {
-                    time: table.querySelector(`th:nth-child(${colIndex})`).textContent.trim(),
                     course: selectedValue || "--",
+                    time: table.querySelector(`th:nth-child(${colIndex-1})`).textContent.trim(),
                 };
+                // console.log(timetable);
             });
 
             cell.textContent = "";
             cell.appendChild(dropdown);
         });
     });
+    // console.log("Final" + timetable);
 }
 
 // Save timetable
@@ -1227,6 +1283,19 @@ function saveTimetable() {
     editButton.style.display = "inline-block";
     saveButton.style.display = "none";
 
+    const headerRow = table.querySelector("tr");
+    const timeSlots = [];
+
+    // Collect updated time slots from the header row
+    headerRow.querySelectorAll("th").forEach((header, colIndex) => {
+        if (colIndex === 0) return; // Skip the first column (Day names)
+        
+        const timeSlotInput = header.querySelector("input");
+        if (timeSlotInput) {
+            timeSlots.push(timeSlotInput.value.trim());
+        }
+    });
+
     const rows = table.querySelectorAll("tr:not(:first-child)");
     rows.forEach(row => {
         const day = row.children[0].textContent.trim();
@@ -1237,7 +1306,10 @@ function saveTimetable() {
             const dropdown = cell.querySelector("select");
             if (dropdown) {
                 const selectedValue = dropdown.value;
-                timetable[day].push({ time: table.querySelector(`th:nth-child(${index + 2})`).textContent.trim(), course: selectedValue || "--" });
+                timetable[day].push({
+                    time: timeSlots[index] || "--", // Use the updated time slot
+                    course: selectedValue || "--",
+                });
             }
         });
     });
@@ -1278,31 +1350,31 @@ function generateCurrentDayTimetable() {
                 // Style the popup
                 const style = document.createElement("style");
                 style.textContent = `
-      #login-popup {
-        position: fixed;
-        top: -50px;
-        left: 50%;
-        transform: translateX(-50%);
-        background-color:#4CAF50;
-        color: white;
-        padding: 10px 20px;
-        border-radius: 5px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        font-size: 16px;
-        opacity: 1;
-        transition: opacity 0.5s ease, top 0.3s ease;
-        z-index: 1000;
-      }
+                #login-popup {
+                    position: fixed;
+                    top: -50px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    background-color:#4CAF50;
+                    color: white;
+                    padding: 10px 20px;
+                    border-radius: 5px;
+                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                    font-size: 16px;
+                    opacity: 1;
+                    transition: opacity 0.5s ease, top 0.3s ease;
+                    z-index: 1000;
+                }
 
-      #login-popup.show {
-        top: 20px;
-      }
+                #login-popup.show {
+                    top: 20px;
+                }
 
-      #login-popup.hide {
-        opacity: 0;
-        top: -50px;
-      }
-    `;
+                #login-popup.hide {
+                    opacity: 0;
+                    top: -50px;
+                }
+                `;
                 document.head.appendChild(style);
 
                 // Show the popup with an upward effect
