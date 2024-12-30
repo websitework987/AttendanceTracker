@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="style1.css">
     <script type="module" src="script1.js" defer></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 
 <body>
@@ -17,7 +18,7 @@
                 <center><em>Student Attendance Tracker</em></center>
             </h2>
             <!-- Profile Icon -->
-            
+
         </div>
 
         <div class="tabs">
@@ -34,16 +35,16 @@
             <!-- <div class="profile-container">
                 <div class="profile-icon" id="profileIcon">P</div>
             </div> -->
-            
+
         </div>
-        <div class="dropdown" id="profileDropdown">
+        <!-- <div class="dropdown" id="profileDropdown">
             <div class="dropdown-item" id="usernameDisplay">Username: Rajat Jangid</div>
             <div class="dropdown-item" id="emailDisplay">Email: test@gmail.com</div>
             <div id="logoutButton">
                 <center><button style="margin: 5px;">Logout</button></center>
             </div>
-        </div>
-        
+        </div> -->
+
 
         <div id="addStudent" class="tab-content">
             <h3 class="heading_02">
@@ -92,6 +93,19 @@
 
 
 
+            <!-- <div class="container_03">
+                <h1>Send WhatsApp Message</h1>
+                <form id="whatsappForm">
+                    <label for="phone">Phone Number (with country code):</label>
+                    <input type="text" id="phone" placeholder="e.g., 1234567890" required>
+        
+                    <label for="message">Message:</label>
+                    <textarea id="message" rows="4" placeholder="Enter your message here..." required></textarea>
+        
+                    <button type="submit">Send Message</button>
+                </form>
+            </div> -->
+
 
         </div>
         <div id="markAttendance" class="tab-content" style="display:none;">
@@ -124,7 +138,34 @@
                         <div class="accordion-body">
                             <div id="currentDayTimetable"></div>
                             <div id="studentList"></div>
-                            <button id="markAttendanceButton" onclick="markAttendance()">Mark Attendance</button>
+                            <!-- <div class="buttons_02">
+                                <button id="markAttendanceButton" onclick="markAttendance()">Mark Attendance</button>
+                                <div class="buttons_inside">
+                                    <div>Download Absent Student List</div>
+                                    <button id="downloadAbsentListCourse" onclick="downloadAbsentList()">Download
+                                        Absent</button>
+                                    <button onclick="downloadAllCoursesAbsentList()">Download All Courses Absent
+                                        List</button>
+
+                                </div>
+                            </div> -->
+                            <div class="buttons_02">
+                                <div class="heading">
+                                    <div><i class="fa fa-download"></i> (Download) Todays Absent Student List &#10534;</div>
+                                </div>
+                                <div class="buttons_row">
+                                    <div class="left">
+                                        <button class="button" id="markAttendanceButton" onclick="markAttendance()">Mark
+                                            Attendance</button>
+                                    </div>
+                                    <div class="right">
+                                        <button class="button" id="downloadAbsentListCourse" onclick="downloadAbsentList()" style="display: none;">Download
+                                            Absent</button>
+                                        <button class="button" onclick="downloadAllCoursesAbsentList()">For All Courses</button>
+                                    </div>
+                                </div>
+                            </div>
+
                             <!-- <div>Hello </div> -->
                         </div>
                     </div>

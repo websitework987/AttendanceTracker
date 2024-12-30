@@ -83,7 +83,13 @@ let timetable1 = {
         { time: "13:00-14:00", course: "Science" },
         { time: "14:00-15:00", course: "Mathematics" }
     ],
-    Saturday: []
+    Saturday: [
+        { time: "10:00-11:00", course: "History" },
+        { time: "22:00-23:00", course: "Literature" },
+        { time: "12:00-13:00", course: "Art" },
+        { time: "13:00-14:00", course: "Science" },
+        { time: "14:00-15:00", course: "Mathematics" }
+    ],
 };
 
 
@@ -524,15 +530,15 @@ window.loadStudents = function (courseSelect) {
                     currentDayCell.innerHTML = `
                         <label style="color: blue;">
                             <input type="radio" name="attendance-${childSnapshot.key}" value="P" ${currentDayAttendance === 'P' ? 'checked' : ''} />
-                            P
+                             P
                         </label>
                         <label style="color: red;">
                             <input type="radio" name="attendance-${childSnapshot.key}" value="A" ${currentDayAttendance === 'A' ? 'checked' : ''} />
-                            A
+                             A
                         </label>
                         <label style="color: green;">
                             <input type="radio" name="attendance-${childSnapshot.key}" value="L" ${currentDayAttendance === 'L' ? 'checked' : ''} />
-                            L
+                             L
                         </label>
                     `;
                     attendanceStatusArray.push(currentDayAttendance || '-');
@@ -591,6 +597,56 @@ window.loadStudents = function (courseSelect) {
 let course;
 
 window.markAttendance = function () {
+
+    if(course == ""){
+            // Create and show the popup message
+        const popup = document.createElement("div");
+        popup.id = "login-popup";
+        popup.textContent = `Select Any Subject !`;
+        document.body.appendChild(popup);
+
+        // Style the popup
+        const style = document.createElement("style");
+        style.textContent = `
+            #login-popup {
+                position: fixed;
+                top: -50px;
+                left: 50%;
+                transform: translateX(-50%);
+                background-color: rgb(255,0,0);
+                color: white;
+                padding: 10px 20px;
+                border-radius: 5px;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                font-size: 16px;
+                opacity: 1;
+                transition: opacity 0.5s ease, top 0.3s ease;
+                z-index: 1000;
+            }
+
+            #login-popup.show {
+                top: 20px;
+            }
+
+            #login-popup.hide {
+                opacity: 0;
+                top: -50px;
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Show the popup with an upward effect
+        setTimeout(() => {
+            popup.classList.add("show");
+        }, 10);
+
+        // Hide the popup after 1.7 seconds
+        setTimeout(() => {
+            popup.classList.add("hide");
+        }, 1400);
+        return;
+    }
+
     const studentList = document.getElementById('studentList');
     const radioButtons = studentList.querySelectorAll('input[type="radio"]:checked'); // Select checked radio buttons
     const currentDate = new Date().toISOString().split('T')[0]; // Get current date in YYYY-MM-DD format
@@ -635,6 +691,7 @@ window.markAttendance = function () {
     
     // loadStudents(course);    
     applyRedFlagLogic();
+
     // Create and show the popup message
     const popup = document.createElement("div");
     popup.id = "login-popup";
@@ -1158,6 +1215,7 @@ function generateFullTimetable() {
 
 
 function createTimetableTable(data, highlightCurrent = false) {
+    // loadDataFromDatabase();
     const days = Object.keys(data);
     const allTimeSlots = [...new Set(days.flatMap(day => data[day].map(slot => slot.time)))];
 
@@ -1324,7 +1382,11 @@ function generateCurrentDayTimetable() {
     const today = new Date();
     const currentDay = today.toLocaleString("default", { weekday: "long" });
     const table = createTimetableTable({ [currentDay]: timetable[currentDay] }, true);
+    const downloadAbsentListCourse = document.getElementById('downloadAbsentListCourse');
+
+
     loadStudents("");
+    downloadAbsentListCourse.style.display='none';
     table.querySelectorAll("td").forEach((cell, index) => {
         const course = cell.textContent.trim();
         if (index === 0) return;
@@ -1340,6 +1402,8 @@ function generateCurrentDayTimetable() {
                 cell.classList.add("active-slot");
 
                 loadStudents(course);
+                downloadAbsentListCourse.style.display='block';
+                downloadAbsentListCourse.innerHTML=`For ${course}`;
 
                 // Create a popup message
                 const popup = document.createElement("div");
@@ -1393,9 +1457,15 @@ function generateCurrentDayTimetable() {
 
     timetableDiv.innerHTML = "";
     timetableDiv.appendChild(table);
+
 }
 
+document.getElementById('headingOne').addEventListener('click', () => {
+    // console.log("SecondHeading");
+    // generateCurrentDayTimetable();
+    generateFullTimetable();
 
+});
 
 document.getElementById('headingTwo').addEventListener('click', () => {
     // console.log("SecondHeading");
@@ -2054,3 +2124,153 @@ window.addEventListener('click', (e) => {
 
 // Initialize
 loadCourses();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Code for Download absent student list 
+
+// Function to generate a file of absent students
+window.downloadAbsentList = function () {
+    const currentDate = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
+    const absentList = [];
+    const studentsRef = ref(db, 'students'); // Reference to all students
+
+    // Ensure a course is selected
+    if (!course) {
+        alert("Please select a course before downloading the absent list.");
+        return;
+    }
+
+    // Fetch all students' data
+    get(studentsRef).then((snapshot) => {
+        if (snapshot.exists()) {
+            const students = snapshot.val();
+
+            // Loop through all students to check attendance
+            for (const [studentName, studentData] of Object.entries(students)) {
+                const attendanceStatus = studentData.attendance?.[course]?.[currentDate]; // Get today's attendance
+                const phoneNumber = studentData.phone || "N/A"; // Get phone number or default to "N/A"
+
+                if (attendanceStatus === 'A') {
+                    absentList.push(`${studentName} (Phone: ${phoneNumber})`); // Add name and phone to absent list
+                }
+            }
+
+            // Generate the text file content
+            const content = absentList.length
+                ? `Absent Students Report\nCourse: ${course}\nDate: ${currentDate}\n\n` +
+                  `-----------------------------------\n` +
+                  absentList.join('\n') +
+                  `\n\n-----------------------------------\n`
+                : `Absent Students Report\nCourse: ${course}\nDate: ${currentDate}\n\nNo absent students.`;
+
+            // Create a blob and a link to download the file
+            const blob = new Blob([content], { type: 'text/plain' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `Absent_Students_${course}_${currentDate}.txt`;
+            link.click();
+
+        } else {
+            console.error('No students found in the database.');
+        }
+    }).catch((error) => {
+        console.error('Error fetching students data:', error);
+    });
+};
+
+
+
+
+
+
+
+//For All Courses 
+
+// Function to download a course-wise formatted absent list with phone numbers
+window.downloadAllCoursesAbsentList = function () {
+    const currentDate = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
+    const coursesAbsentData = {};
+    const studentsRef = ref(db, 'students'); // Reference to all students
+
+    // Fetch all students' data
+    get(studentsRef).then((snapshot) => {
+        if (snapshot.exists()) {
+            const students = snapshot.val();
+
+            // Loop through all students to check attendance course-wise
+            for (const [studentName, studentData] of Object.entries(students)) {
+                const attendance = studentData.attendance || {};
+                const phoneNumber = studentData.phone || "N/A"; // Get phone number or default to "N/A"
+
+                for (const [courseName, courseAttendance] of Object.entries(attendance)) {
+                    const attendanceStatus = courseAttendance[currentDate]; // Get today's attendance for this course
+                    if (attendanceStatus === 'A') {
+                        // Add student to the absent list for this course
+                        if (!coursesAbsentData[courseName]) {
+                            coursesAbsentData[courseName] = [];
+                        }
+                        coursesAbsentData[courseName].push(`${studentName} (Phone: ${phoneNumber})`);
+                    }
+                }
+            }
+
+            // Generate the text file content
+            let content = `Absent Students Report (Date: ${currentDate})\n`;
+            content += `============================================================\n\n`;
+
+            for (const [courseName, absentStudents] of Object.entries(coursesAbsentData)) {
+                content += `Course: ${courseName}\n`;
+                content += `-----------------------------------\n`;
+                content += absentStudents.length
+                    ? absentStudents.join('\n') + '\n'
+                    : 'No absent students\n';
+                content += `\n============================================================\n\n`;
+            }
+
+            if (Object.keys(coursesAbsentData).length === 0) {
+                content += 'No absent students found for any course.\n';
+            }
+
+            // Create a blob and a link to download the file
+            const blob = new Blob([content], { type: 'text/plain' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `All_Courses_Absent_${currentDate}.txt`;
+            link.click();
+
+        } else {
+            console.error('No students found in the database.');
+        }
+    }).catch((error) => {
+        console.error('Error fetching students data:', error);
+    });
+};
