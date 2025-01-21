@@ -4,15 +4,26 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.8/firebase
 import { getDatabase, ref, set, onValue, update, get, remove } from "https://www.gstatic.com/firebasejs/9.6.8/firebase-database.js";
 
 // Your Firebase configuration
+// const firebaseConfig = {
+//     apiKey: "AIzaSyCO-iPHycqRH-OkItRob92wOp9Hd1gau9o",
+//     authDomain: "attendance-dashboard-55466.firebaseapp.com",
+//     databaseURL: "https://attendance-dashboard-55466-default-rtdb.firebaseio.com",
+//     projectId: "attendance-dashboard-55466",
+//     storageBucket: "attendance-dashboard-55466.appspot.com",
+//     messagingSenderId: "450332479502",
+//     appId: "1:450332479502:web:182976f8c41513ebe4ec5f"
+// };
+
 const firebaseConfig = {
     apiKey: "AIzaSyCO-iPHycqRH-OkItRob92wOp9Hd1gau9o",
     authDomain: "attendance-dashboard-55466.firebaseapp.com",
     databaseURL: "https://attendance-dashboard-55466-default-rtdb.firebaseio.com",
     projectId: "attendance-dashboard-55466",
-    storageBucket: "attendance-dashboard-55466.appspot.com",
+    storageBucket: "attendance-dashboard-55466.firebasestorage.app",
     messagingSenderId: "450332479502",
-    appId: "1:450332479502:web:182976f8c41513ebe4ec5f"
-};
+    appId: "1:450332479502:web:182976f8c41513ebe4ec5f",
+    measurementId: "G-074TBX3VLC"
+  };
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
@@ -25,7 +36,7 @@ const db = getDatabase(app);
 
 //Auth-token checking system
 document.addEventListener("DOMContentLoaded", () => {
-    const token = localStorage.getItem("auth-token");
+    const token = localStorage.getItem("auth");
     if (!token) {
         window.location.href = "index.html";
     }
@@ -856,7 +867,7 @@ fetchCoursesFromDatabaseAndUpdate();
 const logoutButton = document.getElementById("logoutButton");
 logoutButton.addEventListener("click", () => {
     console.log("Logged out");
-    localStorage.removeItem("auth-token");
+    localStorage.removeItem("auth");
     // Create a popup message
     const popup = document.createElement("div");
     popup.id = "login-popup";

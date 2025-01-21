@@ -161,7 +161,7 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
       // Signed in
       const user = userCredential.user;
       console.log("Success! Welcome back!");
-      localStorage.setItem("auth-token", "secure-token");
+      localStorage.setItem("auth", "secure-token");
 
       // Create a popup message
       const popup = document.createElement("div");
